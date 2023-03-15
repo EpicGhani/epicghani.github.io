@@ -43,13 +43,13 @@
 <body>
 	<div id="gameContainer">
 		<canvas id="unity-canvas" data-pixel-art=""></canvas>
-		<script src="Build/Combi Shop (03-16-23_0032).loader.js"></script>
+		<script src="Build/Combi Shop (03-16-23_0039).loader.js"></script>
 		<script>
 			var canvas = document.querySelector("#unity-canvas");
 			var config = {
-				dataUrl: "Build/Combi Shop (03-16-23_0032).data",
-				frameworkUrl: "Build/Combi Shop (03-16-23_0032).framework.js",
-				codeUrl: "Build/Combi Shop (03-16-23_0032).wasm",
+				dataUrl: "Build/Combi Shop (03-16-23_0039).data",
+				frameworkUrl: "Build/Combi Shop (03-16-23_0039).framework.js",
+				codeUrl: "Build/Combi Shop (03-16-23_0039).wasm",
 				streamingAssetsUrl: "StreamingAssets",
 				companyName: "Panoptik Digitals",
 				productName: "Combi Shop",
@@ -57,7 +57,7 @@
 			};
 			var scaleToFit;
 			try {
-				scaleToFit = !!JSON.parse("false");
+				scaleToFit = !!JSON.parse("true");
 			} catch (e) {
 				scaleToFit = true;
 			}
