@@ -43,13 +43,13 @@
 <body>
 	<div id="gameContainer">
 		<canvas id="unity-canvas" data-pixel-art=""></canvas>
-		<script src="Build/Word Game (11-24-23_1135).loader.js"></script>
+		<script src="Build/Word Game (12-07-23_1129).loader.js"></script>
 		<script>
 			var canvas = document.querySelector("#unity-canvas");
 			var config = {
-				dataUrl: "Build/Word Game (11-24-23_1135).data",
-				frameworkUrl: "Build/Word Game (11-24-23_1135).framework.js",
-				codeUrl: "Build/Word Game (11-24-23_1135).wasm",
+				dataUrl: "Build/Word Game (12-07-23_1129).data",
+				frameworkUrl: "Build/Word Game (12-07-23_1129).framework.js",
+				codeUrl: "Build/Word Game (12-07-23_1129).wasm",
 				streamingAssetsUrl: "StreamingAssets",
 				companyName: "DefaultCompany",
 				productName: "Word Game",
@@ -57,7 +57,7 @@
 			};
 			var scaleToFit;
 			try {
-				scaleToFit = !!JSON.parse("true");
+				scaleToFit = !!JSON.parse("");
 			} catch (e) {
 				scaleToFit = true;
 			}
