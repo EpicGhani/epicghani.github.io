@@ -44,13 +44,13 @@
 <body>
 	<div id="gameContainer">
 		<canvas id="unity-canvas" data-pixel-art=""></canvas>
-		<script src="Build/Kulintang (12-22-23_1510).loader.js"></script>
+		<script src="Build/Kulintang (12-22-23_1541).loader.js"></script>
 		<script>
 			var canvas = document.querySelector("#unity-canvas");
 			var config = {
-				dataUrl: "Build/Kulintang (12-22-23_1510).data",
-				frameworkUrl: "Build/Kulintang (12-22-23_1510).framework.js",
-				codeUrl: "Build/Kulintang (12-22-23_1510).wasm",
+				dataUrl: "Build/Kulintang (12-22-23_1541).data",
+				frameworkUrl: "Build/Kulintang (12-22-23_1541).framework.js",
+				codeUrl: "Build/Kulintang (12-22-23_1541).wasm",
 				streamingAssetsUrl: "StreamingAssets",
 				companyName: "Panoptik",
 				productName: "Pantayo",
@@ -76,7 +76,7 @@
 					w = window.innerWidth;
 					h = window.innerHeight;
 
-					var r = 1080 / 1920;
+					var r = 1208 / 1920;
 
 					if (w * r > window.innerHeight) {
 						w = Math.min(w, Math.ceil(h / r));
@@ -84,7 +84,7 @@
 					h = Math.floor(w * r);
 				} else {
 					w = 1920;
-					h = 1080;
+					h = 1208;
 				}
 
 				container.style.width = canvas.style.width = w + "px";
@@ -95,6 +95,9 @@
 			createUnityInstance(canvas, config, progressHandler).then(function (instance) {
 				canvas = instance.Module.canvas;
 				onResize();
+
+				document.documentElement.requestFullscreen();
+				screen.orientation.lock("landscape-primary");
 			});
 			window.addEventListener('resize', onResize);
 			onResize();
