@@ -4,7 +4,6 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, orientation=landscape">
 	<title>Pantayo</title>
 	<style>
 		html,
@@ -44,13 +43,18 @@
 <body>
 	<div id="gameContainer">
 		<canvas id="unity-canvas" data-pixel-art=""></canvas>
-		<script src="Build/Kulintang (12-22-23_1541).loader.js"></script>
+		<script src="Build/Kulintang (12-22-23_1558).loader.js"></script>
 		<script>
 			var canvas = document.querySelector("#unity-canvas");
+
+			canvas.style.margin = '0';
+			canvas.style.padding = '0';
+			canvas.style.overflow = 'hidden';
+
 			var config = {
-				dataUrl: "Build/Kulintang (12-22-23_1541).data",
-				frameworkUrl: "Build/Kulintang (12-22-23_1541).framework.js",
-				codeUrl: "Build/Kulintang (12-22-23_1541).wasm",
+				dataUrl: "Build/Kulintang (12-22-23_1558).data",
+				frameworkUrl: "Build/Kulintang (12-22-23_1558).framework.js",
+				codeUrl: "Build/Kulintang (12-22-23_1558).wasm",
 				streamingAssetsUrl: "StreamingAssets",
 				companyName: "Panoptik",
 				productName: "Pantayo",
@@ -76,15 +80,15 @@
 					w = window.innerWidth;
 					h = window.innerHeight;
 
-					var r = 1208 / 1920;
+					var r = 1080 / 2048;
 
 					if (w * r > window.innerHeight) {
 						w = Math.min(w, Math.ceil(h / r));
 					}
 					h = Math.floor(w * r);
 				} else {
-					w = 1920;
-					h = 1208;
+					w = 2048;
+					h = 1080;
 				}
 
 				container.style.width = canvas.style.width = w + "px";
@@ -95,9 +99,6 @@
 			createUnityInstance(canvas, config, progressHandler).then(function (instance) {
 				canvas = instance.Module.canvas;
 				onResize();
-
-				document.documentElement.requestFullscreen();
-				screen.orientation.lock("landscape-primary");
 			});
 			window.addEventListener('resize', onResize);
 			onResize();
@@ -106,7 +107,7 @@
 				// Mobile device style: fill the whole browser client area with the game canvas:
 				const meta = document.createElement('meta');
 				meta.name = 'viewport';
-				meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+				meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes, orientation=landscape';
 				document.getElementsByTagName('head')[0].appendChild(meta);
 			}
 		</script>
