@@ -43,13 +43,13 @@
 <body>
 	<div id="gameContainer">
 		<canvas id="unity-canvas" data-pixel-art=""></canvas>
-		<script src="Build/Sudoku (12-07-23_1128).loader.js"></script>
+		<script src="Build/Sudoku (01-04-24_1323).loader.js"></script>
 		<script>
 			var canvas = document.querySelector("#unity-canvas");
 			var config = {
-				dataUrl: "Build/Sudoku (12-07-23_1128).data",
-				frameworkUrl: "Build/Sudoku (12-07-23_1128).framework.js",
-				codeUrl: "Build/Sudoku (12-07-23_1128).wasm",
+				dataUrl: "Build/Sudoku (01-04-24_1323).data",
+				frameworkUrl: "Build/Sudoku (01-04-24_1323).framework.js",
+				codeUrl: "Build/Sudoku (01-04-24_1323).wasm",
 				streamingAssetsUrl: "StreamingAssets",
 				companyName: "Philstar",
 				productName: "Sudoku",
@@ -57,7 +57,7 @@
 			};
 			var scaleToFit;
 			try {
-				scaleToFit = !!JSON.parse("");
+				scaleToFit = !!JSON.parse("true");
 			} catch (e) {
 				scaleToFit = true;
 			}
