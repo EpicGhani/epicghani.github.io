@@ -440,7 +440,7 @@ class Room extends PIXI.Container {
         ),
         bgs: JSON.parse('[{"texture":"Main_Title_page","depth":0,"exts":{"movementX":0,"movementY":0,"parallaxX":1,"parallaxY":1,"repeat":"no-repeat","scaleX":1,"scaleY":1,"shiftX":0,"shiftY":0}}]'),
         tiles: JSON.parse("[]"),
-        backgroundColor: "#A3F387",
+        backgroundColor: "#000000",
         onStep() {},
         onDraw() {},
         onLeave() {},
@@ -461,7 +461,7 @@ class Room extends PIXI.Container {
         ),
         bgs: JSON.parse('[{"texture":"BG_Main","depth":0,"exts":{"movementX":0,"movementY":0,"parallaxX":1,"parallaxY":1,"repeat":"no-repeat","scaleX":1,"scaleY":1,"shiftX":0,"shiftY":0}}]'),
         tiles: JSON.parse("[]"),
-        backgroundColor: "#000000",
+        backgroundColor: "#A3F387",
         onStep() {
             if (this.countdown <= 0) {
                 if ((this.dropping || ((this.timer2 = this.dropTime), (this.dropping = !0)), 0 != this.selectedBlocks[2] || 0 != this.grid[0][2] || this.rearranging)) 0 != this.grid[0][2] && (this.gameOver = !0);
