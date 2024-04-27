@@ -90,13 +90,6 @@ body {
 
 
 @font-face {
-    font-family: 'Trade Gothic LT Bold';
-    src: url('fonts/fqcb9tjtrQNm7H4.ttf.woff') format('woff'),
-         url('fonts/fqcb9tjtrQNm7H4.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-}
-@font-face {
     font-family: 'Geist-Regular';
     src: url('fonts/fBdNGWmNGgrKJNN.ttf.woff') format('woff'),
          url('fonts/fBdNGWmNGgrKJNN.ttf') format('truetype');
@@ -107,6 +100,13 @@ body {
     font-family: 'Ridley Grotesk Bold';
     src: url('fonts/f5n8W6R95fPfwNn.ttf.woff') format('woff'),
          url('fonts/f5n8W6R95fPfwNn.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Trade Gothic LT Bold';
+    src: url('fonts/fqcb9tjtrQNm7H4.ttf.woff') format('woff'),
+         url('fonts/fqcb9tjtrQNm7H4.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }

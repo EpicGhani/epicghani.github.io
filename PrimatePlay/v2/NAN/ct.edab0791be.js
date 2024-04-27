@@ -970,13 +970,13 @@
           loadingBar.style.width = percents + "%";
         };
         const atlases = [
-          ["./img/a0.{webp,png}.5f5b9836ae.json","./img/a1.{webp,png}.53accecd99.json","./img/a2.{webp,png}.8496d18957.json","./img/a3.{webp,png}.0da108a5cb.json","./img/a4.{webp,png}.9bb0a92527.json"]
+          ["./img/a0.{webp,png}.40fec0dac7.json","./img/a1.{webp,png}.dcae61c014.json","./img/a2.{webp,png}.affb7af63d.json","./img/a3.{webp,png}.178d417173.json","./img/a4.{webp,png}.cfbffa7ac4.json","./img/a5.{webp,png}.4a3e6b3d50.json","./img/a6.{webp,png}.87ef85a7e1.json"]
         ][0];
         const tiledImages = [
-          {"NESTO_GAME_MECHANICS_LIGHTBOX":{"source":"./img/t0.e8e848ae46.{webp,png}","shape":{"type":"rect","top":639,"bottom":640,"left":359,"right":360},"anchor":{"x":0.4993045897079277,"y":0.49960906958561374}}}
+          {}
         ][0];
         const bitmapFonts = [
-          {"Trade Gothic LT Bold_400":"qcb9tjtrQNm7H4.xml","Geist-Regular_400":"BdNGWmNGgrKJNN.xml","Ridley Grotesk Bold_400":"5n8W6R95fPfwNn.xml"}
+          {"Geist-Regular_400":"BdNGWmNGgrKJNN.xml","Ridley Grotesk Bold_400":"5n8W6R95fPfwNn.xml","Trade Gothic LT Bold_400":"qcb9tjtrQNm7H4.xml"}
         ][0];
         const totalAssets = atlases.length;
         let assetsLoaded = 0;
@@ -2271,7 +2271,10 @@
       return parent;
     },
     onBeforeCreateModifier() {
-      
+      if (this.matterEnable) {
+    matter.onCreate(this);
+}
+
       /*!@onbeforecreate@*/
     }
   };
@@ -2580,6 +2583,15 @@ if ((this.transform && (this.transform._localID !== this.transform._currentLocal
         }
     }
 }
+if (this.matterEnable) {
+    this.rotation = this.matterBody.angle;
+    this.x = this.matterBody.position.x;
+    this.y = this.matterBody.position.y;
+    //this.speed = this.matterBody.speed;
+    this.hspeed = this.matterBody.velocity.x;
+    this.vspeed = this.matterBody.velocity.y;
+    //this.direction = u.pdn(this.hspeed, this.vspeed);
+}
 
     },
     onDestroy() {
@@ -2587,6 +2599,9 @@ if ((this.transform && (this.transform._localID !== this.transform._currentLocal
     for (const hash of this.$chashes) {
         place.grid[hash].splice(place.grid[hash].indexOf(this), 1);
     }
+}
+if (this.matterEnable) {
+    Matter.World.remove(rooms.current.matterWorld, this.matterBody);
 }
 
       if (this.behaviors.length) {
@@ -3553,6 +3568,18 @@ if ((this.transform && (this.transform._localID !== this.transform._currentLocal
         if (this === rooms.current) {
     place.tileGrid = {};
 }
+if (this === rooms.current) {
+    rooms.current.matterEngine = Matter.Engine.create();
+    rooms.current.matterWorld = rooms.current.matterEngine.world;
+    rooms.current.matterGravity = rooms.current.matterGravity || [0, 9.8];
+    [
+        rooms.current.matterWorld.gravity.x,
+        rooms.current.matterWorld.gravity.y
+    ] = rooms.current.matterGravity;
+    matter.rulebookStart = [];
+    matter.rulebookActive = [];
+    matter.rulebookEnd = [];
+}
 
         for (let i = 0, li = template.bgs.length; i < li; i++) {
           const bg = new Background(
@@ -3935,6 +3962,30 @@ for (const layer of this.tileLayers) {
     }
     place.enableTilemapCollisions(layer);
 }
+if (this === rooms.current) {
+    matter.on('collisionStart', e => {
+        const {pairs} = e;
+        matter.walkOverWithRulebook(matter.rulebookStart, pairs);
+    });
+    matter.on('collisionActive', e => {
+        const {pairs} = e;
+        matter.walkOverWithRulebook(matter.rulebookActive, pairs);
+    });
+    matter.on('collisionEnd', e => {
+        const {pairs} = e;
+        matter.walkOverWithRulebook(matter.rulebookEnd, pairs);
+    });
+}
+
+for (const layer of this.tileLayers) {
+    if (!layer.matterMakeStatic) {
+        continue;
+    }
+    if (this.children.indexOf(layer) === -1) {
+        continue;
+    }
+    matter.createStaticTilemap(layer);
+}
 
       if (this.behaviors.length) {
         runBehaviors(this, "rooms", "thisOnCreate");
@@ -4007,7 +4058,14 @@ if (!this.kill) {
       }
     },
     beforeDraw() {
-      
+      if (this === rooms.current) {
+    if ([true][0] === false) {
+        Matter.Engine.update(rooms.current.matterEngine, u.time);
+    } else {
+        Matter.Engine.update(rooms.current.matterEngine, 1000 / settings.maxFPS);
+    }
+}
+
     },
     afterDraw() {
       for (const p of pointer.down) {
@@ -4054,7 +4112,7 @@ keyboard.clear();
      * The name of the starting room, as it was set in ct.IDE.
      * @type {string}
      */
-    starting: "Mechanic"
+    starting: "Mechanics"
   };
   var rooms_default = roomsLib;
 
@@ -4770,7 +4828,7 @@ keyboard.clear();
     deadPool.length = 0;
   }, 1e3 * 60);
   var meta = [
-    {"name":"NESTO","author":"PrimatePlay Studio","site":"","version":"0.0.0"}
+    {"name":"NAN","author":"PrimatePlay Studio","site":"","version":"0.0.0"}
   ][0];
   var currentViewMode = "scaleFill";
   var currentHighDPIMode = Boolean([
@@ -5037,6 +5095,19 @@ styles.new(
 });
 
 styles.new(
+    "Geist-Regular_Blue",
+    {
+    "fontFamily": "\"CTPROJFONTGeist-Regular\", \"Geist-Regular\", sans-serif",
+    "fontSize": 40,
+    "fontStyle": "normal",
+    "fontWeight": "400",
+    "align": "center",
+    "lineJoin": "round",
+    "lineHeight": 54,
+    "fill": "#153B90"
+});
+
+styles.new(
     "RG-Bold",
     {
     "fontFamily": "\"CTPROJFONTRidley Grotesk Bold\", \"Ridley Grotesk Bold\", sans-serif",
@@ -5044,18 +5115,6 @@ styles.new(
     "fontStyle": "normal",
     "fontWeight": "400",
     "align": "center",
-    "lineJoin": "round",
-    "lineHeight": 32.400000000000006,
-    "fill": "#FFFFFF"
-});
-
-styles.new(
-    "TD-Bold",
-    {
-    "fontFamily": "\"CTPROJFONTTrade Gothic LT Bold\", \"Trade Gothic LT Bold\", sans-serif",
-    "fontSize": 24,
-    "fontStyle": "normal",
-    "fontWeight": "400",
     "lineJoin": "round",
     "lineHeight": 32.400000000000006,
     "fill": "#FFFFFF"
@@ -5075,16 +5134,16 @@ styles.new(
 });
 
 styles.new(
-    "RG-Bold_Green",
+    "RG-Bold_BigBlue",
     {
     "fontFamily": "\"CTPROJFONTRidley Grotesk Bold\", \"Ridley Grotesk Bold\", sans-serif",
-    "fontSize": 32,
+    "fontSize": 72,
     "fontStyle": "normal",
     "fontWeight": "400",
     "align": "center",
     "lineJoin": "round",
-    "lineHeight": 43.2,
-    "fill": "#46AF5F"
+    "lineHeight": 97.2,
+    "fill": "#153B90"
 });
 
 styles.new(
@@ -5101,36 +5160,48 @@ styles.new(
 });
 
 styles.new(
-    "RG-Bold_BigBlue",
+    "RG-Bold_Blue",
     {
     "fontFamily": "\"CTPROJFONTRidley Grotesk Bold\", \"Ridley Grotesk Bold\", sans-serif",
-    "fontSize": 72,
+    "fontSize": 24,
     "fontStyle": "normal",
     "fontWeight": "400",
     "align": "center",
     "lineJoin": "round",
-    "lineHeight": 97.2,
+    "lineHeight": 32.400000000000006,
     "fill": "#153B90"
 });
 
 styles.new(
-    "Geist-Regular_Blue",
+    "RG-Bold_Green",
     {
-    "fontFamily": "\"CTPROJFONTGeist-Regular\", \"Geist-Regular\", sans-serif",
-    "fontSize": 40,
+    "fontFamily": "\"CTPROJFONTRidley Grotesk Bold\", \"Ridley Grotesk Bold\", sans-serif",
+    "fontSize": 24,
     "fontStyle": "normal",
     "fontWeight": "400",
     "align": "center",
     "lineJoin": "round",
-    "lineHeight": 54,
-    "fill": "#153B90"
+    "lineHeight": 32.400000000000006,
+    "fill": "#46AF5F"
+});
+
+styles.new(
+    "TD-Bold",
+    {
+    "fontFamily": "\"CTPROJFONTTrade Gothic LT Bold\", \"Trade Gothic LT Bold\", sans-serif",
+    "fontSize": 24,
+    "fontStyle": "normal",
+    "fontWeight": "400",
+    "lineJoin": "round",
+    "lineHeight": 32.400000000000006,
+    "fill": "#FFFFFF"
 });
 
     
     
 templates.templates["Logo"] = {
     name: "Logo",
-    depth: 55,
+    depth: 60,
     blendMode: PIXI.BLEND_MODES.NORMAL,
     visible: true,
     baseClass: "AnimatedSprite",
@@ -5156,9 +5227,37 @@ templates.templates["Logo"] = {
 };
 templates.list['Logo'] = [];
         
+templates.templates["Placeholder"] = {
+    name: "Placeholder",
+    depth: 0,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Placeholder",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Placeholder'] = [];
+        
 templates.templates["Detailer"] = {
     name: "Detailer",
-    depth: 51,
+    depth: 0,
     blendMode: PIXI.BLEND_MODES.NORMAL,
     visible: true,
     baseClass: "AnimatedSprite",
@@ -5172,23 +5271,138 @@ templates.templates["Detailer"] = {
         
     },
     onDraw: function () {
-        /* template Detailer — core_OnDraw (On frame end event) */
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Detailer'] = [];
+        
+templates.templates["Background"] = {
+    name: "Background",
+    depth: 1,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NAN_GAME_BACKGROUND",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Background'] = [];
+        
+templates.templates["Top"] = {
+    name: "Top",
+    depth: 1,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NAN_GAME_ASSET–TOP_LINE",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Top'] = [];
+        
+templates.templates["Ground"] = {
+    name: "Ground",
+    depth: 1,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Detailer",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": true,
+    "matterStatic": true,
+    "matterConstraint": "none"
+}
+};
+templates.list['Ground'] = [];
+        
+templates.templates["HMO"] = {
+    name: "HMO",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "5HMO_COMPLEX_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        /* template HMO — core_OnDraw (On frame end event) */
 {
-if(pointer.collides(this))
+if(this.position.y < 290 && !rooms.current.win && this.passed)
 {
-    if(this.offset == 0)
-    {
-        this.offset = this.getRoom().scrollParent.position.y - pointer.y;
-    }
-
-    this.getRoom().scrollParent.position.y = Math.min(Math.max(pointer.y + this.offset, this.getRoom().minY), this.getRoom().maxY);
-    this.getRoom().scrolling = true;
+    rooms.current.timer1 = 0;
+    rooms.current.win = true;
+    rooms.current.timerLabel.text = '00:00';
+    rooms.current.timer1 = 0;
+    pointer.clear();
+    rooms.append('Try Again');
+    this.kill = true;
 }
 
-if(pointer.released[0])
+if(this.position.y > 300)
 {
-    this.getRoom().scrolling = false;
-    this.offset = 0;
+    this.passed = true;
 }
 }
 
@@ -5197,7 +5411,752 @@ if(pointer.released[0])
         
     },
     onCreate: function () {
-        /* template Detailer — core_OnCreate (On create event) */
+        /* template HMO — core_OnCreate (On create event) */
+{
+this.passed = false;
+}
+
+    },
+    extends: {
+    "matterEnable": true,
+    "matterFriction": 2,
+    "matterFrictionAir": 0.05
+}
+};
+templates.list['HMO'] = [];
+        
+templates.templates["BLactis"] = {
+    name: "BLactis",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "B.LACTIS_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        /* template BLactis — core_OnDraw (On frame end event) */
+{
+if(this.position.y < 290 && !rooms.current.win && this.passed)
+{
+    rooms.current.timer1 = 0;
+    rooms.current.win = true;
+    rooms.current.timerLabel.text = '00:00';
+    rooms.current.timer1 = 0;
+    pointer.clear();
+    rooms.append('Try Again');
+    this.kill = true;
+}
+
+if(this.position.y > 300)
+{
+    this.passed = true;
+}
+}
+
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        /* template BLactis — core_OnCreate (On create event) */
+{
+this.passed = false;
+}
+
+    },
+    extends: {
+    "matterEnable": true,
+    "matterFriction": 2,
+    "matterFrictionAir": 0.05
+}
+};
+templates.list['BLactis'] = [];
+        
+templates.templates["Protein"] = {
+    name: "Protein",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "OPTIMIZED_PROTEIN_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        /* template Protein — core_OnDraw (On frame end event) */
+{
+if(this.position.y < 290 && !rooms.current.win && this.passed)
+{
+    rooms.current.timer1 = 0;
+    rooms.current.win = true;
+    rooms.current.timerLabel.text = '00:00';
+    rooms.current.timer1 = 0;
+    pointer.clear();
+    rooms.append('Try Again');
+    this.kill = true;
+}
+
+if(this.position.y > 300)
+{
+    this.passed = true;
+}
+}
+
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        /* template Protein — core_OnCreate (On create event) */
+{
+this.passed = false;
+}
+
+    },
+    extends: {
+    "matterEnable": true,
+    "matterFriction": 2,
+    "matterFrictionAir": 0.05
+}
+};
+templates.list['Protein'] = [];
+        
+templates.templates["Sucrose"] = {
+    name: "Sucrose",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "ZERO_SUCROSE_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        /* template Sucrose — core_OnDraw (On frame end event) */
+{
+if(this.position.y < 290 && !rooms.current.win && this.passed)
+{
+    rooms.current.timer1 = 0;
+    rooms.current.win = true;
+    rooms.current.timerLabel.text = '00:00';
+    rooms.current.timer1 = 0;
+    pointer.clear();
+    rooms.append('Try Again');
+    this.kill = true;
+}
+
+if(this.position.y > 300)
+{
+    this.passed = true;
+}
+}
+
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        /* template Sucrose — core_OnCreate (On create event) */
+{
+this.passed = false;
+}
+
+    },
+    extends: {
+    "matterEnable": true,
+    "matterFriction": 2,
+    "matterFrictionAir": 0.05
+}
+};
+templates.list['Sucrose'] = [];
+        
+templates.templates["Brain"] = {
+    name: "Brain",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Brain",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFrictionAir": 0.05,
+    "cgroup": "Core"
+}
+};
+templates.list['Brain'] = [];
+        
+templates.templates["Digestion"] = {
+    name: "Digestion",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Digestion",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFrictionAir": 0.05,
+    "cgroup": "Core"
+}
+};
+templates.list['Digestion'] = [];
+        
+templates.templates["Growth"] = {
+    name: "Growth",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Growth",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFrictionAir": 0.05,
+    "cgroup": "Core"
+}
+};
+templates.list['Growth'] = [];
+        
+templates.templates["Immunity"] = {
+    name: "Immunity",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Immunity",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFrictionAir": 0.05,
+    "cgroup": "Core"
+}
+};
+templates.list['Immunity'] = [];
+        
+templates.templates["Protection"] = {
+    name: "Protection",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Protection",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFrictionAir": 0.05,
+    "cgroup": "Core"
+}
+};
+templates.list['Protection'] = [];
+        
+templates.templates["Core"] = {
+    name: "Core",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Core",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        /* template Core — core_OnDraw (On frame end event) */
+{
+if(this.position.y < 290 && !rooms.current.win && this.passed)
+{
+    rooms.current.timer1 = 0;
+    rooms.current.win = true;
+    rooms.current.timerLabel.text = '00:00';
+    rooms.current.timer1 = 0;
+    pointer.clear();
+    rooms.append('Try Again');
+    this.kill = true;
+}
+
+if(this.position.y > 300)
+{
+    this.passed = true;
+}
+}
+
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        /* template Core — core_OnCreate (On create event) */
+{
+this.current;
+this.passed = false;
+
+this.brain = null;
+this.digestion = null;
+this.growth = null;
+this.immunity = null;
+this.protection = null;
+}
+
+    },
+    extends: {
+    "matterEnable": true,
+    "matterFrictionAir": 0.05,
+    "matterSensor": false,
+    "matterStatic": false,
+    "cgroup": "Core",
+    "matterFriction": 5
+}
+};
+templates.list['Core'] = [];
+        
+templates.templates["Cursor"] = {
+    name: "Cursor",
+    depth: 5,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NAN_GAME-HAND_ICON",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Cursor'] = [];
+        
+templates.templates["BLactis_"] = {
+    name: "BLactis_",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "B.LACTIS_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFriction": 2,
+    "matterFrictionAir": 0.05
+}
+};
+templates.list['BLactis_'] = [];
+        
+templates.templates["HMO_"] = {
+    name: "HMO_",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "5HMO_COMPLEX_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFriction": 2,
+    "matterFrictionAir": 0.05
+}
+};
+templates.list['HMO_'] = [];
+        
+templates.templates["Protein_"] = {
+    name: "Protein_",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "OPTIMIZED_PROTEIN_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFriction": 2,
+    "matterFrictionAir": 0.05
+}
+};
+templates.list['Protein_'] = [];
+        
+templates.templates["Sucrose_"] = {
+    name: "Sucrose_",
+    depth: 2,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "ZERO_SUCROSE_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": false,
+    "matterFriction": 2,
+    "matterFrictionAir": 0.05
+}
+};
+templates.list['Sucrose_'] = [];
+        
+templates.templates["Pro"] = {
+    name: "Pro",
+    depth: 5,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NAN_GAME_5HMO_ORB",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {
+    "matterEnable": true,
+    "matterFrictionAir": 0.005
+}
+};
+templates.list['Pro'] = [];
+        
+templates.templates["Instruction"] = {
+    name: "Instruction",
+    depth: 10,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "ORB_MECHANICS",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Instruction'] = [];
+        
+templates.templates["Mechanics1"] = {
+    name: "Mechanics1",
+    depth: 5,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NAN_MECHANICS_LIGHTBOX",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        /* template Mechanics1 — core_OnDraw (On frame end event) */
+{
+if (pointer.collides(this) && !this.pressed) {
+    this.pressed = true;
+    
+}
+if(pointer.released[0] && this.pressed)
+{
+    var m = templates.copy('Mechanics2',this.position.x, this.position.y);
+    rooms.current.addChild(m);
+    m.scale.x = m.scale.y = 1;
+    this.kill = true;
+}
+}
+
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        /* template Mechanics1 — core_OnCreate (On create event) */
+{
+this.pressed = false;
+}
+
+    },
+    extends: {}
+};
+templates.list['Mechanics1'] = [];
+        
+templates.templates["Mechanics2"] = {
+    name: "Mechanics2",
+    depth: 4,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NAN_GAME_MECHANICS_LIGHTBOX_PART_2",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        /* template Mechanics2 — core_OnDraw (On frame end event) */
+{
+if (pointer.collides(this) && !this.pressed) {
+    this.pressed = true;
+}
+if(pointer.released[0] && this.pressed)
+{
+    pointer.clear();
+    rooms.switch('Game');
+}
+}
+
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        /* template Mechanics2 — core_OnCreate (On create event) */
+{
+this.pressed = false;
+}
+
+    },
+    extends: {}
+};
+templates.list['Mechanics2'] = [];
+        
+templates.templates["Lightbox"] = {
+    name: "Lightbox",
+    depth: 10,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Lightbox",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        /* template Lightbox — core_OnDraw (On frame end event) */
+{
+if(pointer.collides(this))
+{
+    if(this.offset == 0)
+    {
+        this.offset = this.getRoom().scrollParent.position.y - pointer.y;
+        this.getRoom().scrolling = true;
+    }
+
+    this.getRoom().scrollParent.position.y = Math.min(Math.max(pointer.y + this.offset, this.getRoom().minY), this.getRoom().maxY);
+}
+
+if(pointer.released[0])
+{
+    this.offset = 0;
+    this.getRoom().scrolling = false;
+}
+}
+
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        /* template Lightbox — core_OnCreate (On create event) */
 {
 this.offset = 0;
 }
@@ -5205,572 +6164,11 @@ this.offset = 0;
     },
     extends: {}
 };
-templates.list['Detailer'] = [];
-        
-templates.templates["Black"] = {
-    name: "Black",
-    depth: 50,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "Black",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['Black'] = [];
-        
-templates.templates["GREEN_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP"] = {
-    name: "GREEN_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP",
-    depth: 3,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "GREEN_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        /* template GREEN_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP — core_OnCreate (On create event) */
-{
-this.count = 0;
-this.countText;
-}
-/* template GREEN_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP — core_OnPointerClick (OnPointerClick event) */
-this.eventMode = 'dynamic';
-this.on('pointertap', () => {
-    
-var card = this.getRoom().cards[this.getRoom().cards.length - 1];
-
-if(card.target == this)
-{
-    card.scale.x = card.scale.y = 0.5
-
-    tween.add({
-        obj: card,
-        fields:{
-            x: this.position.x,
-            y: this.position.y,
-        },
-        duration: 100,
-        silent: true
-    }).then(() =>{
-        card.depth = 0;
-        UpdateCards(this.getRoom(), card);
-    });
-}
-else
-{
-    var defAngle = card.angle;
-    var targetAngle = (defAngle > 300) ? defAngle + 5 : 5
-
-    tween.add({
-        obj: card,
-        fields:{
-            angle: targetAngle
-        },
-        duration: 50,
-        silent: true
-    }).then(() => {
-       tween.add({
-        obj: card,
-        fields:{
-            angle: defAngle
-        },
-        duration: 50,
-        silent: true
-        }) 
-    });
-}
-
-});
-
-    },
-    extends: {}
-};
-templates.list['GREEN_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP'] = [];
-        
-templates.templates["ORANGE_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP"] = {
-    name: "ORANGE_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP",
-    depth: 3,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "ORANGE_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        /* template ORANGE_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP — core_OnCreate (On create event) */
-{
-this.count = 0;
-this.countText;
-}
-/* template ORANGE_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP — core_OnPointerClick (OnPointerClick event) */
-this.eventMode = 'dynamic';
-this.on('pointertap', () => {
-    
-var card = this.getRoom().cards[this.getRoom().cards.length - 1];
-
-if(card.target == this)
-{
-    card.scale.x = card.scale.y = 0.5
-    
-    tween.add({
-        obj: card,
-        fields:{
-            x: this.position.x,
-            y: this.position.y
-        },
-        duration: 100,
-        silent: true
-    }).then(() =>{
-        card.depth = 0;
-        UpdateCards(this.getRoom(), card);
-    });
-}
-else
-{
-    var defAngle = card.angle;
-    var targetAngle = (defAngle > 300) ? defAngle + 5 : 5
-
-    tween.add({
-        obj: card,
-        fields:{
-            angle: targetAngle
-        },
-        duration: 50,
-        silent: true
-    }).then(() => {
-       tween.add({
-        obj: card,
-        fields:{
-            angle: defAngle
-        },
-        duration: 50,
-        silent: true
-        }) 
-    });
-}
-
-});
-
-    },
-    extends: {}
-};
-templates.list['ORANGE_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP'] = [];
-        
-templates.templates["RED_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP"] = {
-    name: "RED_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP",
-    depth: 3,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "RED_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        /* template RED_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP — core_OnCreate (On create event) */
-{
-this.count = 0;
-this.countText;
-}
-/* template RED_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP — core_OnPointerClick (OnPointerClick event) */
-this.eventMode = 'dynamic';
-this.on('pointertap', () => {
-    
-var card = this.getRoom().cards[this.getRoom().cards.length - 1];
-
-if(card.target == this)
-{
-    card.scale.x = card.scale.y = 0.5
-    
-    tween.add({
-        obj: card,
-        fields:{
-            x: this.position.x,
-            y: this.position.y
-        },
-        duration: 100,
-        silent: true
-    }).then(() =>{
-        card.depth = 0;
-        UpdateCards(this.getRoom(), card);
-    });
-}
-else
-{
-    var defAngle = card.angle;
-    var targetAngle = (defAngle > 300) ? defAngle + 5 : 5
-
-    tween.add({
-        obj: card,
-        fields:{
-            angle: targetAngle
-        },
-        duration: 50,
-        silent: true
-    }).then(() => {
-       tween.add({
-        obj: card,
-        fields:{
-            angle: defAngle
-        },
-        duration: 50,
-        silent: true
-        }) 
-    });
-}
-
-});
-
-    },
-    extends: {}
-};
-templates.list['RED_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP'] = [];
-        
-templates.templates["Card"] = {
-    name: "Card",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "Card",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        /* template Card — core_OnDraw (On frame end event) */
-{
-// if (pointer.down[0] && this.getRoom().cards[this.getRoom().cards.length-1] == this && selected == this)
-// {
-//     this.position.x = pointer.x + this.offsetX;
-//     this.position.y = pointer.y + this.offsetY;
-// }
-}
-
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        /* template Card — core_OnCreate (On create event) */
-{
-this.target;
-
-this.offsetX;
-this.offsetY;
-
-this.defX = this.position.x;
-this.defY = this.position.y;
-}
-/* template Card — core_OnPointerDown (OnPointerDown event) */
-this.eventMode = 'dynamic';
-this.on('pointerdown', () => {
-    
-// if(this.getRoom().cards[this.getRoom().cards.length-1] == this)
-// {
-//     selected = this;
-//     this.depth = 5;
-
-//     this.offsetX = this.position.x - pointer.x;
-//     this.offsetY = this.position.y - pointer.y;
-
-//     ct.tween.add({
-//         obj: this.scale,
-//         fields: {
-//             x: .5,
-//             y: .5
-//         },
-//         duration: 75,
-//         silent: true
-//     });
-// }
-
-});
-/* template Card — core_OnPointerUp (OnPointerUp event) */
-this.eventMode = 'dynamic';
-this.on('pointerup', () => {
-    
-// if(this.getRoom().cards[this.getRoom().cards.length-1] == this)
-// {   
-//     selected = null;
-
-//     let destX = this.target.x;
-//     let destY = this.target.y;
-
-//     let distance = Math.abs((this.position.x - destX) + (this.position.y - destY)); 
-
-//     if(distance < 100)
-//     {
-//         this.correct = true;
-//         this.position.x = destX;
-//         this.position.y = destY;
-//         ct.tween.add({
-//             obj: this.scale,
-//             fields: {
-//                 x: 0.5,
-//                 y: 0.5
-//             },
-//             duration: 75,
-//             silent: true
-//         }).then(() =>{
-//             ct.tween.add({
-//                 obj: this.scale,
-//                 fields: {
-//                     x: 0.6,
-//                     y: 0.22
-//                 },
-//                 duration: 6,
-//                 silent: true
-//             }).then(() =>{
-//                 this.depth = 0;
-//                 UpdateCards(this.getRoom(), this);
-//             });
-//         });
-//     }
-//     else
-//     {
-//         ct.tween.add({
-//             obj: this.scale,
-//             fields: {
-//                 x: .75,
-//                 y: .75
-//             },
-//             duration: 75,
-//             silent: true
-//         });
-
-//         this.position.x = this.defX;
-//         this.position.y = this.defY;
-//     }
-// }
-
-});
-/* template Card — core_OnPointerUpOutside (OnPointerUpOutside event) */
-this.eventMode = 'dynamic';
-this.on('pointerupoutside', () => {
-    
-// if(selected)
-// {
-//     ct.tween.add({
-//         obj: this.scale,
-//         fields: {
-//             x: .75,
-//             y: .75
-//         },
-//         duration: 75,
-//         silent: true
-//     });
-
-//     this.position.x = this.defX;
-//     this.position.y = this.defY;
-// }
-
-});
-
-    },
-    extends: {}
-};
-templates.list['Card'] = [];
-        
-templates.templates["Body"] = {
-    name: "Body",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "Body_Icon",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['Body'] = [];
-        
-templates.templates["Brain"] = {
-    name: "Brain",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "Brain_Icon",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['Brain'] = [];
-        
-templates.templates["Energy"] = {
-    name: "Energy",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "Energy_Icon",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['Energy'] = [];
-        
-templates.templates["BG"] = {
-    name: "BG",
-    depth: 53,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "CutBG",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['BG'] = [];
-        
-templates.templates["GameBG"] = {
-    name: "GameBG",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "NESTO_GAME_BG",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['GameBG'] = [];
+templates.list['Lightbox'] = [];
         
 templates.templates["ScrollParent"] = {
     name: "ScrollParent",
-    depth: 52,
+    depth: 11,
     blendMode: PIXI.BLEND_MODES.NORMAL,
     visible: true,
     baseClass: "AnimatedSprite",
@@ -5796,9 +6194,121 @@ templates.templates["ScrollParent"] = {
 };
 templates.list['ScrollParent'] = [];
         
-templates.templates["Black_dup"] = {
-    name: "Black_dup",
-    depth: 55,
+templates.templates["CutBG"] = {
+    name: "CutBG",
+    depth: 13,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "CutBG",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['CutBG'] = [];
+        
+templates.templates["Detailer1"] = {
+    name: "Detailer1",
+    depth: 0,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NAN_DETAILER_VISUAL_1",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Detailer1'] = [];
+        
+templates.templates["Detailer2"] = {
+    name: "Detailer2",
+    depth: 0,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NAN_DETAILER_VISUAL_2",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Detailer2'] = [];
+        
+templates.templates["NANKIDLogo"] = {
+    name: "NANKIDLogo",
+    depth: 0,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "NANKID_LOGO_NAN_DETAILER_EDIT",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['NANKIDLogo'] = [];
+        
+templates.templates["Black"] = {
+    name: "Black",
+    depth: 15,
     blendMode: PIXI.BLEND_MODES.NORMAL,
     visible: true,
     baseClass: "AnimatedSprite",
@@ -5812,9 +6322,10 @@ templates.templates["Black_dup"] = {
         
     },
     onDraw: function () {
-        /* template Black_dup — core_OnDraw (On frame end event) */
+        /* template Black — core_OnDraw (On frame end event) */
 {
-if (pointer.collides(this) && !this.getRoom().pressed && !this.getRoom().scrolling) {
+if(pointer.collides(this) && !this.getRoom().pressed && !this.getRoom().scrolling)
+{
     this.getRoom().pressed = true;
     tween.add({
         obj: rooms.current,
@@ -5840,35 +6351,7 @@ if (pointer.collides(this) && !this.getRoom().pressed && !this.getRoom().scrolli
     },
     extends: {}
 };
-templates.list['Black_dup'] = [];
-        
-templates.templates["NESTOLogo"] = {
-    name: "NESTOLogo",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "NTO_LOGO",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['NESTOLogo'] = [];
+templates.list['Black'] = [];
         
 templates.templates["Div"] = {
     name: "Div",
@@ -5898,366 +6381,14 @@ templates.templates["Div"] = {
 };
 templates.list['Div'] = [];
         
-templates.templates["Detailer1"] = {
-    name: "Detailer1",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "NTO_DETAILER_VISUAL_1-BRAIN-Learn_and_develop",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['Detailer1'] = [];
-        
-templates.templates["Detailer2"] = {
-    name: "Detailer2",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "NTO_DETAILER_VISUAL_2-BODY-Develop_a_stronger",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['Detailer2'] = [];
-        
-templates.templates["Detailer3"] = {
-    name: "Detailer3",
-    depth: 0,
-    blendMode: PIXI.BLEND_MODES.NORMAL,
-    visible: true,
-    baseClass: "AnimatedSprite",
-    
-            texture: "NTO_DETAILER_VISUAL_3-ENERGY-give_enough_energy",
-        animationFPS: 30,
-        playAnimationOnStart: false,
-        loopAnimation: true,
-    behaviors: JSON.parse('[]'),
-    onStep: function () {
-        
-    },
-    onDraw: function () {
-        
-    },
-    onDestroy: function () {
-        
-    },
-    onCreate: function () {
-        
-    },
-    extends: {}
-};
-templates.list['Detailer3'] = [];
-        
     
     
-rooms.templates['Game'] = {
-    name: 'Game',
-    width: 720,
-    height: 1280,
-    behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":0.2,"y":0.2},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":360,"y":704,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"GameBG"}]'),
-    bgs: JSON.parse('[{"texture":"BG","depth":-1,"exts":{"movementX":0,"movementY":0,"parallaxX":1,"parallaxY":1,"repeat":"no-repeat","scaleX":0.46,"scaleY":0.46,"shiftX":0,"shiftY":0}}]'),
-    tiles: JSON.parse('[]'),
-    backgroundColor: '#212121',
-    
-    onStep() {
-        /* room Game — core_Timer1 (Timer 1 event) */
-
-if (this.timer1 > 0 && this.timer1 <= (false ? u.timeUi : u.time)) {
-    this.timer1 = 0;
-    
-this.timer1 = 1;
-
-this.remainingTime--;
-
-if(this.remainingTime >= 10)
-{
-    this.timerLabel.text = '00:' + this.remainingTime;
-    this.timer1 = 1;
-}
-else if(this.remainingTime < 10 && this.remainingTime > 0)
-{
-    this.timerLabel.text = '00:0'+this.remainingTime;
-    this.timer1 = 1;
-}
-else if(this.remainingTime <= 0)
-{
-    this.timerLabel.text = '00:0'+this.remainingTime;
-    var again = rooms.append('Try Again');
-    this.timer1 = 0; 
-    again.alpha = 0;
-    pointer.clear();
-    tween.add({
-        obj: again,
-        fields:{
-            alpha: 1
-        },
-        duration: 250,
-        silent: true
-    });
-}
-
-} else {
-    this.timer1 -= false ? u.timeUi : u.time;
-}
-
-    },
-    onDraw() {
-        
-    },
-    onLeave() {
-        
-    },
-    onCreate() {
-        /* room Game — core_OnRoomStart (On room start event) */
-{
-this.cards = [];
-this.box = [];
-this.remainingTime = 30;
-
-this.cardSet = redCards.concat(greenCards,orangeCards);
-
-for(let i = this.cardSet.length - 1;i > 0;i--)
-{
-    var item = Math.floor(Math.random() * (i-1));
-    var temp = this.cardSet[i];
-    this.cardSet[i] = this.cardSet[item];
-    this.cardSet[item] = temp; 
-}
-
-const primaryGreen = 0x93DA77;
-const primaryOrange = 0xFEA958;
-const primaryRed = 0xFF9F94;
-
-// === SPAWNING HERE ===
-
-var box1 = templates.copy('GREEN_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP', 360, 1000);
-box1.scale.x = box1.scale.y = 0.175;
-box1.depth = 3;
-box1.countText = this.counter1 = new PIXI.Text('0', styles.get('RG-Bold')); 
-box1.addChild(this.counter1);
-this.counter1.y = 300;
-this.counter1.scale.x = this.counter1.scale.y = 5;
-this.counter1.anchor.x = 0.5;
-this.counter1.anchor.y = 0.5;
-this.counter1.depth = 100;
-
-this.boxTitle1 = new PIXI.Text('BODY', styles.get('RG-Bold_Big'));
-box1.addChild(this.boxTitle1);
-this.boxTitle1.anchor.x = this.boxTitle1.anchor.y = 0.5;
-this.boxTitle1.scale.x = this.boxTitle1.scale.y = 2;
-this.box.push(box1);
-
-
-var box2 = templates.copy('ORANGE_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP', 520, 1000);
-box2.scale.x = box2.scale.y = 0.175;
-box2.depth = 3;
-box2.countText = this.counter2 = new PIXI.Text('0', styles.get('RG-Bold')); 
-box2.addChild(this.counter2);
-this.counter2.y = 300;
-this.counter2.scale.x = this.counter2.scale.y = 5;
-this.counter2.anchor.x = 0.5;
-this.counter2.anchor.y = 0.5;
-this.counter2.depth = 100;
-
-this.boxTitle2 = new PIXI.Text('ENERGY', styles.get('RG-Bold_Big'));
-box2.addChild(this.boxTitle2);
-this.boxTitle2.anchor.x = this.boxTitle2.anchor.y = 0.5;
-this.boxTitle2.scale.x = this.boxTitle2.scale.y = 2;
-this.box.push(box2);
-
-var box3 = templates.copy('RED_BOX-NESTO_ACTIVITY-MSN_RESIDENTS_WORKSHOP', 200, 1000);
-box3.scale.x = box3.scale.y = 0.175;
-box3.depth = 3;
-box3.countText = this.counter3 = new PIXI.Text('0', styles.get('RG-Bold')); 
-box3.addChild(this.counter3);
-this.counter3.y = 300;
-this.counter3.scale.x = this.counter3.scale.y = 5;
-this.counter3.anchor.x = 0.5;
-this.counter3.anchor.y = 0.5;
-this.counter3.depth = 100;
-
-this.boxTitle3 = new PIXI.Text('BRAIN', styles.get('RG-Bold_Big'));
-box3.addChild(this.boxTitle3);
-this.boxTitle3.anchor.x = this.boxTitle3.anchor.y = 0.5;
-this.boxTitle3.scale.x = this.boxTitle3.scale.y = 2;
-this.box.push(box3);
-
-for(let i = 0;i < this.cardSet.length;i++)
-{
-    let c = null;
-    let target = null;
-    let icon = null;
-
-    if(orangeCards.includes(this.cardSet[i]))
-    {
-        c = primaryOrange;
-        target = this.box[1];
-        icon = 'Energy';
-    }
-    else if(redCards.includes(this.cardSet[i]))
-    {    
-        c = primaryRed;
-        target = this.box[2];
-        icon = 'Brain';
-    }
-    else if(greenCards.includes(this.cardSet[i]))
-    {
-        c = primaryGreen;
-        target = this.box[0];
-        icon = 'Body';
-    }
-    
-    if(i == 27 - 2)
-    {
-        var card = templates.copy('Card', 360, 520)
-        card.scale.x = card.scale.y = .75;
-        card.depth = 4;
-        card.angle = 5;
-        card.tint = c;
-        card.target = target;
-
-        var cardText = new PIXI.Text(this.cardSet[i], styles.get('RG-Bold')); 
-        card.addChild(cardText);
-        cardText.anchor.x = cardText.anchor.y = 0.5;
-        cardText.scale.x = cardText.scale.y = 1.75;
-
-        var iconCopy = templates.copy(icon, 110,-225)
-        card.addChild(iconCopy);
-        iconCopy.scale.x = iconCopy.scale.y = .1;
-
-        this.cards.push(card);
-    }
-    else if(i == 27 - 1)
-    {
-        var card = templates.copy('Card', 360, 550)
-        card.scale.x = card.scale.y = .75;
-        card.depth = 5;
-        card.angle = 15;
-        card.tint = c;
-        card.target = target;
-
-        var cardText = new PIXI.Text(this.cardSet[i], styles.get('RG-Bold')); 
-        card.addChild(cardText);
-        cardText.anchor.x = cardText.anchor.y = 0.5;
-        cardText.scale.x = cardText.scale.y = 1.75;
-
-        var iconCopy = templates.copy(icon, 110,-225)
-        card.addChild(iconCopy);
-        iconCopy.scale.x = iconCopy.scale.y = .1;
-
-        this.cards.push(card);
-    }
-    else if(i == 27 - 3)
-    {
-        var card = templates.copy('Card', 360, 520)
-        card.scale.x = card.scale.y = .75;
-        card.depth = 3;
-        card.angle = 350;
-        card.tint = c;
-        card.target = target;
-
-        var cardText = new PIXI.Text(this.cardSet[i], styles.get('RG-Bold')); 
-        card.addChild(cardText);
-        cardText.anchor.x = cardText.anchor.y = 0.5;
-        cardText.scale.x = cardText.scale.y = 1.75;
-
-        var iconCopy = templates.copy(icon, 110,-225)
-        card.addChild(iconCopy);
-        iconCopy.scale.x = iconCopy.scale.y = .1;
-
-        this.cards.push(card);
-    }
-    else
-    {
-        var card = templates.copy('Card', 360, 520)
-        card.scale.x = card.scale.y = .75;
-        card.depth = 2;
-        card.angle = 350;
-        card.alpha = 0;
-        card.tint = c;
-        card.target = target;
-
-        var cardText = new PIXI.Text(this.cardSet[i], styles.get('RG-Bold')); 
-        card.addChild(cardText);
-        cardText.anchor.x = cardText.anchor.y = 0.5;
-        cardText.scale.x = cardText.scale.y = 1.75;
-
-        var iconCopy = templates.copy(icon, 110,-225)
-        card.addChild(iconCopy);
-        iconCopy.scale.x = iconCopy.scale.y = .1;
-
-        this.cards.push(card);
-    }
-}
-
-// var l3 = templates.copy('Life',610, 210);
-// l3.depth = 100;
-// l3.scale.x = l3.scale.y = 0.15;
-// this.lives.push(l3);
-// this.lives.shift();
-
-// TIMER LABEL
-this.timerLabel = new PIXI.Text('00:'+this.remainingTime, styles.get('RG-Bold')); 
-this.addChild(this.timerLabel);
-this.timerLabel.x = 315;
-this.timerLabel.y = 160;
-this.timerLabel.depth = 100;
-
-this.timer1 = 1;
-
-
-}
-
-    },
-    isUi: false,
-    follow: false,
-    extends: {},
-    bindings: {
-    
-    }
-}
-        
 rooms.templates['Detailer'] = {
     name: 'Detailer',
     width: 720,
     height: 1280,
     behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[{"x":384,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0,"y":0.22},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":360,"y":709,"opacity":1,"tint":16777215,"scale":{"x":0.23,"y":0.23},"rotation":0,"exts":{},"customProperties":{},"template":"Detailer"},{"x":-21.24786377,"y":-3.91851807,"opacity":0,"tint":16777215,"scale":{"x":12,"y":3.35057418},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-76.01629639,"y":-3.43322754,"opacity":0,"tint":16777215,"scale":{"x":1.9150273,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":682.59434017,"y":-12.01629639,"opacity":0,"tint":16777215,"scale":{"x":1.7099727,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-100.18322754,"y":1208.01629639,"opacity":0,"tint":16777215,"scale":{"x":14,"y":3},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":0.2,"y":0.2},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":360,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0.22855,"y":0.22855},"rotation":0,"exts":{},"customProperties":{},"template":"BG"}]'),
+    objects: JSON.parse('[{"x":360,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0.2285,"y":0.2285},"rotation":0,"exts":{},"customProperties":{},"template":"CutBG"},{"x":363,"y":708,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Lightbox"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":683.5625,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.31933594,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-10.1875,"y":-97.5,"opacity":0,"tint":16777215,"scale":{"x":11.35253906,"y":4.8828125},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.67089844,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":1204.0625,"opacity":0,"tint":16777215,"scale":{"x":13,"y":3.18652344},"rotation":0,"exts":{},"customProperties":{},"template":"Black"}]'),
     bgs: JSON.parse('[]'),
     tiles: JSON.parse('[]'),
     backgroundColor: '#212121',
@@ -6277,85 +6408,415 @@ rooms.templates['Detailer'] = {
 pointer.clear();
 
 this.pressed = false;
+
 this.scrolling = false;
 
-this.minY = -100;
+this.minY = -130;
 this.maxY = 640;
 
 // MAIN SCROLL OBJECT
 this.scrollParent = templates.copy('ScrollParent', 360, 640);
 this.addChild(this.scrollParent);
 
-//LOGO
+// LOGO
 this.logo = templates.copy('Logo', 0, -350);
 this.scrollParent.addChild(this.logo);
-this.logo.scale.x = this.logo.scale.y = 0.2;
+this.logo.scale.x = this.logo.scale.y = 1;
 
-// NESTO LOGO
-this.nesto = templates.copy('NESTOLogo', 0, -190);
-this.scrollParent.addChild(this.nesto);
-this.nesto.scale.x = this.nesto.scale.y = 1;
+// NANKID LOGO
+this.nankid = templates.copy('NANKIDLogo', 0, -200);
+this.scrollParent.addChild(this.nankid);
+this.nankid.scale.x = this.nankid.scale.y = 1;
 
 // HEAD
 this.head = new PIXI.Text('CONGRATULATIONS!', styles.get('RG-Bold_BigBlue'));
 this.scrollParent.addChild(this.head);
 this.head.anchor.x = this.head.anchor.y = 0.5;
 this.head.scale.x = this.head.scale.y = .6;
-this.head.y = -40;
+this.head.y = -50;
 
 // DIVIDER
-this.divider = templates.copy('Div', 0, -5);
+this.divider = templates.copy('Div', 0, -15);
 this.scrollParent.addChild(this.divider);
 this.divider.anchor.x = this.divider.anchor.y = 0.5;
 this.divider.scale.x = this.divider.scale.y = 0.25;
 
 // DESCRIPTION
-this.description = new PIXI.Text('You\'ve completed the NESTOGEN KID 3+ 27 nutrients that\nensures a child\'s BRAIN, BODY, and ENERGY is nourished\nduring early childhood!\n\nEarly childhood is crucial stage as it ensures\nthe foundation of not only their health but also their period\nof growth and development.\n\nCurrently, 4 out of 5 3-5 yo children may have hidden\nhunger or micronutrient deficiency that can hinder\ntheir development.\n\nDuring this period, children must be able to:', styles.get('Geist-Regular_Blue'));
+this.description = new PIXI.Text('We believe that a well-brought up child can grow up\nto be the best person they can be with the right support\nand nutrition from the start.\n\nWith each orb, you have combined the nutrients that help\ndoctors and parents nourish all key areas of a child\'s\ndevelopment, opening them up to infinite possibilities\nfor the future!\n\nFor more than 155 years, Nestlé has been relentlessly\npioneering scientific research in early childhood nutrition.\nSo, with our most scientifically advanced formula with the\nexclusive nutrients of NANKID OPTIPRO, B.Lactis Probiotic,\nOptimized Protein, and clinically provem 5 HMO Complex.\n we continue to pursue the nex scientific breakthroughs\nto give children the 5 Pro Edge!', styles.get('Geist-Regular_Blue'));
 this.scrollParent.addChild(this.description);
 this.description.anchor.x = 0.5;
 this.description.anchor.y = 0;
 this.description.scale.x = this.description.scale.y = 0.525;
-this.description.y = 10;
+this.description.y = 0;
 
 // DETAIL 1
-this.d1 = templates.copy('Detailer1', -5, 450);
+this.d1 = templates.copy('Detailer1', 5, 650);
 this.scrollParent.addChild(this.d1);
 this.d1.anchor.x = this.d1.anchor.y = 0.5;
 this.d1.scale.x = this.d1.scale.y = 1;
 
 // DETAIL 2
-this.d2 = templates.copy('Detailer2', 10, 610);
+this.d2 = templates.copy('Detailer2', 0, 1080);
 this.scrollParent.addChild(this.d2);
 this.d2.anchor.x = this.d2.anchor.y = 0.5;
 this.d2.scale.x = this.d2.scale.y = 1;
+}
 
-// DETAIL 3
-this.d3 = templates.copy('Detailer3', -10, 780);
-this.scrollParent.addChild(this.d3);
-this.d3.anchor.x = this.d3.anchor.y = 0.5;
-this.d3.scale.x = this.d3.scale.y = 1;
+    },
+    isUi: false,
+    follow: false,
+    extends: {},
+    bindings: {
+    
+    }
+}
+        
+rooms.templates['Mechanics'] = {
+    name: 'Mechanics',
+    width: 720,
+    height: 1280,
+    behaviors: JSON.parse('[]'),
+    objects: JSON.parse('[{"x":360,"y":640,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Mechanics1"}]'),
+    bgs: JSON.parse('[]'),
+    tiles: JSON.parse('[]'),
+    backgroundColor: '#212121',
+    
+    onStep() {
+        
+    },
+    onDraw() {
+        
+    },
+    onLeave() {
+        
+    },
+    onCreate() {
+        
+    },
+    isUi: false,
+    follow: false,
+    extends: {},
+    bindings: {
+    
+    }
+}
+        
+rooms.templates['Game'] = {
+    name: 'Game',
+    width: 720,
+    height: 1280,
+    behaviors: JSON.parse('[]'),
+    objects: JSON.parse('[{"x":360,"y":725,"opacity":1,"tint":13424096,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Background"},{"x":798,"y":864,"opacity":0,"tint":16777215,"scale":{"x":5.0625,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Ground"},{"x":360,"y":1285,"opacity":0,"tint":16777215,"scale":{"x":10.5,"y":5.84375},"rotation":0,"exts":{},"customProperties":{},"template":"Ground"},{"x":-87,"y":864,"opacity":0,"tint":16777215,"scale":{"x":5.28125,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Ground"},{"x":358,"y":425,"opacity":1,"tint":16777215,"scale":{"x":0.225,"y":0.1},"rotation":0,"exts":{},"customProperties":{},"template":"Top"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":360,"y":1168,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Instruction"}]'),
+    bgs: JSON.parse('[{"texture":"BG","depth":0,"exts":{"movementX":0,"movementY":0,"parallaxX":1,"parallaxY":1,"repeat":"no-repeat","scaleX":0.46,"scaleY":0.46,"shiftX":0,"shiftY":0}}]'),
+    tiles: JSON.parse('[]'),
+    backgroundColor: '#212121',
+    
+    onStep() {
+        /* room Game — core_Timer1 (Timer 1 event) */
 
-// DESCRIPTION 2
-this.description2 = new PIXI.Text('Help support all of these aspects and more with NESTOGEN\nKID 3+ that contains TAPAT and SAPAT levels of 27 more\nnutrients to ensure age-appropriate nutrition and\nsupport a child\'s BRAIN, BODY, and ENERGY\nrequirements during early childhood.', styles.get('Geist-Regular_Blue'));
-this.scrollParent.addChild(this.description2);
-this.description2.anchor.x = 0.5;
-this.description2.anchor.y = 0;
-this.description2.scale.x = this.description2.scale.y = 0.525;
-this.description2.y = 880;
+if (this.timer1 > 0 && this.timer1 <= (false ? u.timeUi : u.time)) {
+    this.timer1 = 0;
+    
+this.remainingTime--;
+if(this.remainingTime >= 10 && this.remainingTime < 60)
+{
+    this.timerLabel.text = '00:'+this.remainingTime;
+    this.timer1 = 1;
+}
+else if(this.remainingTime < 10 && this.remainingTime > 0)
+{
+    this.timerLabel.text = '00:0'+this.remainingTime;
+    this.timer1 = 1;
+}
+else if(this.remainingTime >= 60)
+{
+    this.timerLabel.text = '0'+ Math.floor(this.remainingTime / 60) + ':' + ((this.remainingTime >= 70) ? this.remainingTime - 60 : '0'+(this.remainingTime - 60));
+    this.timer1 = 1;
+}
+else if(this.remainingTime == 0)
+{
+    this.win = true;
+    console.log(this.remainingTime);
+    this.timerLabel.text = '00:00';
+    this.timer1 = 0;
+    pointer.clear();
+    var end = rooms.append('Try Again');
+    end.alpha = 0;
+    tween.add({
+        obj: end,
+        fields:{
+            alpha: 1
+        },
+        duration: 250
+    });
+}
 
-// // DETAIL 4
-// this.d4 = templates.copy('Detailer4', 0, 1200);
-// this.scrollParent.addChild(this.d4);
-// this.d4.anchor.x = this.d4.anchor.y = 0.5;
-// this.d4.scale.x = this.d4.scale.y = 0.225;
+} else {
+    this.timer1 -= false ? u.timeUi : u.time;
+}
+/* room Game — core_OnStep (On frame start event) */
+{
+if(pointer.down[0] && !this.win)
+{
+    let targetX = Math.min(Math.max(pointer.x, this.currentOrb != null ? this.minX + (this.currentOrb.width/2) : this.minX), this.currentOrb != null ? this.maxX - (this.currentOrb.width / 2) : this.maxX);
 
-// DESCRIPTION 3
-this.description3 = new PIXI.Text('References:\nUNICEF. The state of the world\'s children 2019.\nExecutive Summary. Retrieved from:\nhttps://www.unicef.org/media/60811/file/\nSOWC-2019-Exec-summary.pdf', styles.get('Geist-Regular_Blue'));
-this.scrollParent.addChild(this.description3);
-this.description3.anchor.x = 0.5;
-this.description3.anchor.y = 0;
-this.description3.scale.x = this.description3.scale.y = 0.525;
-this.description3.y = 1100;
+    this.c.position.x = targetX;
+    if(this.currentOrb != null)
+        this.currentOrb.x = this.c.x;
+}
+
+if(pointer.released[0] && this.currentOrb != null && !this.win)
+{
+    this.previousOrb = this.currentOrb;
+    this.currentOrb.kill = true;
+    this.currentOrb = null;
+    var selected = this.previousOrb.template.slice(0,-1);
+    var orb = templates.copy(selected, this.c.position.x, this.c.position.y);
+    this.ingredients.push(orb);
+
+    u.wait(500).then(() =>{
+        if(!this.win)
+        {
+            this.currentOrb = templates.copy(GetOrb(), this.c.x,this.c.y);
+
+            let targetX = Math.min(Math.max(this.c.x, this.currentOrb != null ? this.minX + (this.currentOrb.width/2) : this.minX), this.currentOrb != null ? this.maxX - (this.currentOrb.width / 2) : this.maxX);
+            this.c.x = targetX;
+            this.currentOrb.x = this.c.x;
+        }
+    });
+}
+}
+
+    },
+    onDraw() {
+        
+    },
+    onLeave() {
+        
+    },
+    onCreate() {
+        /* room Game — core_OnRoomStart (On room start event) */
+{
+this.ingredients = [];
+this.ingCount = 0;
+this.finalVariant = [];
+this.variantCount = 0;
+this.coreOrbs = [];
+this.remainingTime = 120;
+
+this.minX = 75;
+this.maxX = 645;
+
+this.dropping = false;
+this.c = templates.copy('Cursor', 360, 300);
+this.c.scale.x = this.c.scale.y = 0.25;
+
+this.previousOrb = null;
+this.currentOrb = templates.copy(GetOrb(), this.c.x,this.c.y);
+
+this.win = false;
+this.runningSequence = false;
+
+matter.on('collisionStart', e => {
+    // Loop over every collision in a frame
+    if(!this.win)
+    {
+        for (var pair of e.pairs) 
+        {
+            // INGREDIENT ORBS
+            if((pair.bodyA.copy.template === 'Protein' && pair.bodyB.copy.template === 'Sucrose') || (pair.bodyA.copy.template === 'Sucrose' && pair.bodyB.copy.template === 'Protein'))
+            {
+                var posX = (pair.bodyA.copy.position.x + pair.bodyB.copy.position.x) / 2;
+                var posY = (pair.bodyB.copy.position.y + pair.bodyB.copy.position.y) / 2;
+
+                this.ingredients.slice(this.ingredients.indexOf(pair.bodyA),1);
+                this.ingredients.slice(this.ingredients.indexOf(pair.bodyB),1);
+                pair.bodyA.copy.kill = true;
+                pair.bodyB.copy.kill = true;
+
+                var core = templates.copy('Core', posX, posY);
+                this.orb = templates.copy('Protection', 0, 0);
+                core.current = 'Protection';
+                core.protection = core;
+                core.addChild(this.orb);
+                this.coreOrbs.push('Protection');
+                this.finalVariant.push(core);
+            }
+            if(pair.bodyA.copy.template === 'HMO' && pair.bodyB.copy.template === 'HMO')
+            {
+                var posX = (pair.bodyA.copy.position.x + pair.bodyB.copy.position.x) / 2;
+                var posY = (pair.bodyB.copy.position.y + pair.bodyB.copy.position.y) / 2;
+
+                this.ingredients.slice(this.ingredients.indexOf(pair.bodyA),1);
+                this.ingredients.slice(this.ingredients.indexOf(pair.bodyB),1);
+                pair.bodyA.copy.kill = true;
+                pair.bodyB.copy.kill = true;
+
+                var core = templates.copy('Core', posX, posY);
+                this.orb = templates.copy('Brain', 0, 0);
+                core.current = 'Brain';
+                core.brain = core;
+                core.addChild(this.orb);
+                this.coreOrbs.push('Brain');
+                this.finalVariant.push(core);
+            }
+            if((pair.bodyA.copy.template === 'Protein' && pair.bodyB.copy.template === 'HMO') || (pair.bodyA.copy.template === 'HMO' && pair.bodyB.copy.template === 'Protein'))
+            {
+                var posX = (pair.bodyA.copy.position.x + pair.bodyB.copy.position.x) / 2;
+                var posY = (pair.bodyB.copy.position.y + pair.bodyB.copy.position.y) / 2;
+
+                this.ingredients.slice(this.ingredients.indexOf(pair.bodyA),1);
+                this.ingredients.slice(this.ingredients.indexOf(pair.bodyB),1);
+                pair.bodyA.copy.kill = true;
+                pair.bodyB.copy.kill = true;
+
+                var core = templates.copy('Core', posX, posY);
+                this.orb = templates.copy('Growth', 0, 0);
+                core.current = 'Growth';
+                core.growth = true;
+                core.addChild(this.orb);
+                this.coreOrbs.push('Growth');
+                this.finalVariant.push(core);
+            }
+            if((pair.bodyA.copy.template === 'BLactis' && pair.bodyB.copy.template === 'HMO') || (pair.bodyA.copy.template === 'HMO' && pair.bodyB.copy.template === 'BLactis'))
+            {
+                var posX = (pair.bodyA.copy.position.x + pair.bodyB.copy.position.x) / 2;
+                var posY = (pair.bodyB.copy.position.y + pair.bodyB.copy.position.y) / 2;
+
+                this.ingredients.slice(this.ingredients.indexOf(pair.bodyA),1);
+                this.ingredients.slice(this.ingredients.indexOf(pair.bodyB),1);
+                pair.bodyA.copy.kill = true;
+                pair.bodyB.copy.kill = true;
+
+                var r = Math.random() <= .5 ? 'Immunity' : 'Digestion';
+
+                var core = templates.copy('Core', posX, posY);
+                this.orb = templates.copy(r, 0, 0);
+                r=='Immunity' ? core.immunity = core : core.digestion = core;
+                core.current = r;
+                core.addChild(this.orb);
+                core.alpha = 1;
+                this.coreOrbs.push(r);
+                this.finalVariant.push(core);
+            }
+
+            // CORE ORBS
+            if(pair.bodyA.copy.template === 'Core' && pair.bodyB.copy.template === 'Core')
+            {
+                SetData(pair.bodyA.copy, pair.bodyB.copy.current, pair.bodyB.copy);
+                SetData(pair.bodyB.copy, pair.bodyA.copy.current, pair.bodyA.copy);
+            }
+
+            // WIN CONDITION CHECK
+            if(this.coreOrbs.includes('Brain') && this.coreOrbs.includes('Digestion') && this.coreOrbs.includes('Growth') && this.coreOrbs.includes('Immunity') && this.coreOrbs.includes('Protection'))
+            {
+                this.win = true;
+                this.timer1 = 0;
+
+                if(!this.runningSequence)
+                {
+                    this.runningSequence = true;
+                    FirstInterval();
+                }
+            }
+        }
+    }
+});
+
+matter.on('collisionEnd', e => {
+    // Loop over every collision in a frame
+    if(!this.win)
+    {
+        for (var pair of e.pairs) 
+        {
+            if(pair.bodyA.copy.template === 'Core' && pair.bodyB.copy.template === 'Core')
+            {
+                SetData(pair.bodyA.copy, pair.bodyB.copy.current, null);
+                SetData(pair.bodyB.copy, pair.bodyA.copy.current, null);
+            }    
+        }
+    }
+});
+
+function FirstInterval()
+{
+    let newArr = [];
+    for(let i = 0;i < rooms.current.ingredients.length;i++)
+    {
+        if(!rooms.current.ingredients[i].kill)
+            newArr.push(rooms.current.ingredients[i]);
+    }
+    let leftOvers = [];
+    let leftOverOrb = [];
+    for(let i = 0;i < rooms.current.finalVariant.length;i++)
+    {
+        if(!leftOvers.includes(rooms.current.finalVariant[i].current))
+        {
+            leftOvers.push(rooms.current.finalVariant[i].current);
+        }
+        else
+        {
+            leftOverOrb.push(rooms.current.finalVariant[i]);
+        }
+    }
+    console.log(leftOvers);
+
+    for(let i = 0;i < newArr.length;i++)
+    {
+        newArr[i].kill = true;
+    }
+    for(let i = 0;i < leftOverOrb.length;i++)
+    {
+        leftOverOrb[i].kill = true;
+    } 
+    u.wait(4000).then(() =>{
+        SecondInterval();
+    });
+}
+function SecondInterval()
+{
+    let newArr = [];
+    let c = 0;
+    for(let i = 0;i < rooms.current.finalVariant.length;i++)
+    {
+        if(!rooms.current.finalVariant[i].kill || (rooms.current.finalVariant[i] != null && !rooms.current.finalVariant[i].kill))
+            newArr.push(rooms.current.finalVariant[i]);
+    }
+
+    for(let i = 0;i < newArr.length;i++)
+    {
+        newArr[i].kill = true;
+    }   
+    this.p = templates.copy('Pro',360,920);
+    rooms.current.addChild(this.p);
+    this.p.scale.x = this.p.scale.y = 1;
+
+    u.wait(2000).then(() =>{
+        let detailer = rooms.append('Detailer');
+        detailer.alpha = 0;
+        tween.add({
+            obj: detailer,
+            fields:{
+                alpha: 1
+            },
+            duration: 250,
+            silent: true
+        }).then(() =>{
+            pointer.clear();
+        });
+    });
+}
+
+// TIMER LABEL
+this.timerLabel = new PIXI.Text('02:00', styles.get('RG-Bold')); 
+this.addChild(this.timerLabel);
+this.timerLabel.x = 360;
+this.timerLabel.y = 160;
+this.timerLabel.anchor.x = 0.5;
+
+this.timer1 = 1;
+
+
 }
 
     },
@@ -6372,7 +6833,7 @@ rooms.templates['Try Again'] = {
     width: 720,
     height: 1280,
     behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[{"x":-64,"y":-64,"opacity":0.9,"tint":16777215,"scale":{"x":13,"y":22},"rotation":0,"exts":{},"customProperties":{},"template":"Black"}]'),
+    objects: JSON.parse('[{"x":-96.8125,"y":-64,"opacity":0.9,"tint":"#000000","scale":{"x":14,"y":23},"rotation":0,"exts":{},"customProperties":{"newProperty1":"","newProperty2":""},"template":"Placeholder"}]'),
     bgs: JSON.parse('[]'),
     tiles: JSON.parse('[]'),
     backgroundColor: '#212121',
@@ -6385,17 +6846,17 @@ rooms.templates['Try Again'] = {
 {
 if (pointer.down[0] && !this.pressed) {
     this.pressed = true;
+    finished = 0;
+    selected = null;
     tween.add({
         obj: this,
-        fields: {
+        fields:{
             alpha: 0
         },
         duration: 250,
         silent: true
-    })
-    .then(() => {
-       rooms.switch('Game');
-
+    }).then(() =>{
+        rooms.switch('Game');
     });
 }
 }
@@ -6409,63 +6870,11 @@ if (pointer.down[0] && !this.pressed) {
 {
 pointer.clear();
 
-this.timerLabel = new PIXI.Text('TRY AGAIN', styles.get('RG-Bold_Big')); 
+this.timerLabel = new PIXI.Text('TRY AGAIN', styles.get('RG-Bold_BigGreen')); 
 this.addChild(this.timerLabel);
 this.timerLabel.x = 150;
 this.timerLabel.y = 400;
 this.timerLabel.depth = 100;
-}
-
-    },
-    isUi: false,
-    follow: false,
-    extends: {},
-    bindings: {
-    
-    }
-}
-        
-rooms.templates['Mechanic'] = {
-    name: 'Mechanic',
-    width: 720,
-    height: 1280,
-    behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[]'),
-    bgs: JSON.parse('[{"texture":"NESTO_GAME_MECHANICS_LIGHTBOX","depth":0,"exts":{"movementX":0,"movementY":0,"parallaxX":1,"parallaxY":1,"repeat":"no-repeat","scaleX":1,"scaleY":1,"shiftX":0,"shiftY":0}}]'),
-    tiles: JSON.parse('[]'),
-    backgroundColor: '#212121',
-    
-    onStep() {
-        
-    },
-    onDraw() {
-        /* room Mechanic — core_OnDraw (On frame end event) */
-{
-if (pointer.down[0] && !this.pressed) {
-    this.pressed = true;
-    tween.add({
-        obj: this,
-        fields: {
-            alpha: 0
-        },
-        duration: 250,
-        silent: true
-    })
-    .then(() => {
-       rooms.switch('Game');
-
-    });
-}
-}
-
-    },
-    onLeave() {
-        
-    },
-    onCreate() {
-        /* room Mechanic — core_OnRoomStart (On room start event) */
-{
-this.pressed = false;
 }
 
     },
@@ -8949,109 +9358,306 @@ const keyboard = (function ctKeyboard() {
     window.tween = tween;
 }
 
-  let selected = null;
+window.matter = {
+    on(event, callback) {
+        Matter.Events.on(rooms.current.matterEngine, event, callback);
+    },
+    off(event, callback) {
+        Matter.Events.off(rooms.current.matterEngine, event, callback);
+    },
 
-let orangeCards = ['BIOTIN', 'MANGANESE', 'PANTOTHENIC\nACID', 'NIACIN', 'VITAMIN\nB12', 'VITAMIN\nB6', 'VITAMIN\nB2', 'VITAMIN\nB1', 'IRON'];
-let greenCards = ['VITAMIN\nC', 'VITAMIN\nK', 'VITAMIN\nE', 'VITAMIN\nD', 'VITAMIN\nA', 'ZINC', 'SELENIUM', 'CHLORIDE', 'FOLIC\nACID', 'MAGNESIUM', 'PHOSPHORUS', 'CALCIUM', 'POTASSIUM', 'SODIUM'];
-let redCards = ['IODINE', 'COPPER', 'LA', 'ALA'];;
-function UpdateCards(room, card)
-{
-    for(let i = 0;i < room.box.length;i++)
-    {
-        if(card.target == room.box[i])
-        {
-            room.box[i].count++;
-            room.box[i].countText.text = room.box[i].count + '';       
-        }
-    }
-
-    room.cards[room.cards.length-1].kill = true;
-    room.cards.pop();
-    if(room.cards.length > 0)
-    {
-        for(let i = room.cards.length-1;i >= 0;i--)
-        {
-            let c = room.cards[i];
-
-            if(room.cards.length <=3)
-                c.alpha = 1;
-
-            c.defX = c.position.x;
-            c.defY = c.position.y;
-
-            if(i == room.cards.length-1)
-            {
-                let targetAngle = (i == 25) ? 15 : 380;
-
-                tween.add({
-                    obj: c,
-                    fields: {
-                        x: 360,
-                        y: 550,
-                        angle: targetAngle,
-                        depth: 5,
-                        alpha: 1
-                    },
-                    duration: 100,
-                    silent: true
-                }).then(() => {
-                    c.defX = c.position.x;
-                    c.defY = c.position.y;
-                });  
-            }
-            else if(i == room.cards.length-2)
-            {
-                tween.add({
-                    obj: c,
-                    fields: {
-                        x: 360,
-                        y: 520,
-                        angle: 365,
-                        depth: 4,
-                        alpha: 1
-                    },
-                    duration: 200,
-                    silent: true,
-                }).then(() => {
-                    c.defX = c.position.x;
-                    c.defY = c.position.y;
-                });  
-            }
-            else if(i == room.cards.length-3)
-            {
-                tween.add({
-                    obj: c,
-                    fields: {
-                        x: 360,
-                        y: 520,
-                        angle: 350,
-                        depth: 3,
-                        alpha: 1
-                    },
-                    duration: 100,
-                    silent: true
-                }).then(() => {
-                    c.defX = c.position.x;
-                    c.defY = c.position.y;
-                });  
-            }
-        }
-    }
-    else
-    {
-        var detail = rooms.append('Detailer');
-        room.timer1 = 0; 
-        detail.alpha = 0;
-        pointer.clear();
-        tween.add({
-            obj: detail,
-            fields:{
-                alpha: 1
-            },
-            duration: 100,
-            silent: true
+    teleport(copy, x, y) {
+        Matter.Body.setPosition(copy.matterBody, {
+            x,
+            y
         });
+        copy.x = x;
+        copy.y = y;
+    },
+    push(copy, forceX, forceY, fromX, fromY) {
+        if (fromX === void 0) {
+            Matter.Body.applyForce(copy.matterBody, copy.matterBody.position, {
+                x: forceX,
+                y: forceY
+            });
+        } else {
+            Matter.Body.applyForce(copy.matterBody, {
+                x: fromX,
+                y: fromY
+            }, {
+                x: forceX,
+                y: forceY
+            });
+        }
+    },
+    spin(copy, speed) {
+        Matter.Body.setAngularVelocity(copy.matterBody, u.degToRad(speed));
+    },
+    rotate(copy, angle) {
+        Matter.Body.setAngle(copy.matterBody, u.degToRad(angle));
+    },
+    rotateBy(copy, angle) {
+        Matter.Body.rotate(copy.matterBody, u.degToRad(angle));
+    },
+    scale(copy, x, y) {
+        Matter.Body.scale(copy, x, y);
+        copy.scale.x = x;
+        copy.scale.y = y;
+    },
+    launch(copy, hspeed, vspeed) {
+        Matter.Body.setVelocity(copy.matterBody, {
+            x: hspeed,
+            y: vspeed
+        });
+    },
+
+    pin(copy) {
+        const constraint = Matter.Constraint.create({
+            bodyB: copy.matterBody,
+            pointA: {
+                x: copy.x,
+                y: copy.y
+            },
+            length: 0
+        });
+        Matter.World.add(rooms.current.matterWorld, constraint);
+        return constraint;
+    },
+    tie(copy, position, stiffness = 0.05, damping = 0.05) {
+        const constraint = Matter.Constraint.create({
+            bodyB: copy.matterBody,
+            pointA: position,
+            pointB: {
+                x: 0,
+                y: 0
+            },
+            stiffness,
+            damping
+        });
+        Matter.World.add(rooms.current.matterWorld, constraint);
+        return constraint;
+    },
+    rope(copy, length, stiffness = 0.05, damping = 0.05) {
+        const constraint = Matter.Constraint.create({
+            pointA: copy.position,
+            bodyB: copy.matterBody,
+            length,
+            stiffness,
+            damping
+        });
+        Matter.World.add(rooms.current.matterWorld, constraint);
+        return constraint;
+    },
+    tieTogether(copy1, copy2, stiffness, damping) {
+        const constraint = Matter.Constraint.create({
+            bodyA: copy1.matterBody,
+            bodyB: copy2.matterBody,
+            stiffness,
+            damping
+        });
+        Matter.World.add(rooms.current.matterWorld, constraint);
+        return constraint;
+    },
+    onCreate(copy) {
+        const options = {
+            isStatic: copy.matterStatic,
+            isSensor: copy.matterSensor,
+            restitution: copy.matterRestitution || 0.1,
+            friction: copy.matterFriction === void 0 ? 1 : copy.matterFriction,
+            frictionStatic: copy.matterFrictionStatic === void 0 ? 0.1 : copy.matterFrictionStatic,
+            frictionAir: copy.matterFrictionAir || 0.01,
+            density: copy.matterDensity || 0.001
+        };
+        if (copy.shape.type === 'rect') {
+            copy.matterBody = Matter.Bodies.rectangle(
+                copy.x - copy.shape.left,
+                copy.y - copy.shape.top,
+                copy.shape.left + copy.shape.right,
+                copy.shape.top + copy.shape.bottom,
+                options
+            );
+        }
+        if (copy.shape.type === 'circle') {
+            copy.matterBody = Matter.Bodies.circle(
+                copy.x,
+                copy.y,
+                copy.shape.r,
+                options
+            );
+        }
+        if (copy.shape.type === 'strip') {
+            const vertices = Matter.Vertices.create(copy.shape.points);
+            copy.matterBody = Matter.Bodies.fromVertices(copy.x, copy.y, vertices, options);
+        }
+
+        Matter.Body.setCentre(copy.matterBody, {
+            x: (copy.texture.defaultAnchor.x - 0.5) * copy.texture.width,
+            y: (copy.texture.defaultAnchor.y - 0.5) * copy.texture.height
+        }, true);
+        Matter.Body.setPosition(copy.matterBody, copy.position);
+        Matter.Body.setAngle(copy.matterBody, u.degToRad(copy.angle));
+        Matter.Body.scale(copy.matterBody, copy.scale.x, copy.scale.y);
+
+        Matter.World.add(rooms.current.matterWorld, copy.matterBody);
+        copy.matterBody.copy = copy;
+
+        if (copy.matterFixPivot && copy.matterFixPivot[0]) {
+            [copy.pivot.x] = copy.matterFixPivot;
+        }
+        if (copy.matterFixPivot && copy.matterFixPivot[1]) {
+            [, copy.pivot.y] = copy.matterFixPivot;
+        }
+
+        if (copy.matterConstraint === 'pinpoint') {
+            copy.constraint = window.matter.pin(copy);
+        } else if (copy.matterConstraint === 'rope') {
+            copy.constraint = window.matter.rope(
+                copy,
+                copy.matterRopeLength === 0 ? 64 : copy.matterRopeLength,
+                copy.matterRopeStiffness === 0 ? 0.05 : copy.matterRopeStiffness,
+                copy.matterRopeDamping === 0 ? 0.05 : copy.matterRopeDamping
+            );
+        }
+    },
+    createStaticTilemap(tilemap) {
+        const options = {
+            isStatic: true,
+            isSensor: false,
+            restitution: tilemap.matterRestitution || 0.1,
+            friction: tilemap.matterFriction === void 0 ? 1 : tilemap.matterFriction
+        };
+        for (const tile of tilemap.tiles) {
+            window.matter.createStaticTile(tile, options);
+        }
+    },
+    createStaticTile(tile, options) {
+        const {shape} = tile.sprite;
+        if (shape.type === 'rect') {
+            tile.matterBody = Matter.Bodies.rectangle(
+                tile.x - shape.left,
+                tile.y - shape.top,
+                shape.left + shape.right,
+                shape.top + shape.bottom,
+                options
+            );
+        } else if (shape.type === 'circle') {
+            tile.matterBody = Matter.Bodies.circle(
+                tile.x,
+                tile.y,
+                shape.r,
+                options
+            );
+        } else if (shape.type === 'strip') {
+            const vertices = Matter.Vertices.create(shape.points);
+            tile.matterBody = Matter.Bodies.fromVertices(tile.x, tile.y, vertices, options);
+        }
+        Matter.Body.setCentre(tile.matterBody, {
+            x: (tile.sprite.texture.defaultAnchor.x - 0.5) * tile.sprite.texture.width,
+            y: (tile.sprite.texture.defaultAnchor.y - 0.5) * tile.sprite.texture.height
+        }, true);
+        Matter.Body.setPosition(tile.matterBody, tile.sprite.position);
+        Matter.World.add(rooms.current.matterWorld, tile.matterBody);
+    },
+    getImpact(pair) {
+        const {bodyA, bodyB} = pair;
+        if (bodyA.isSensor || bodyB.isSensor) {
+            return 0;
+        }
+        // Because static objects are Infinity-ly heavy, and Infinity * 0 returns NaN,
+        // We should compute mass for static objects manually.
+        const massA = bodyA.mass === Infinity ? 0 : bodyA.mass,
+              massB = bodyB.mass === Infinity ? 0 : bodyB.mass;
+        const impact = /*(bodyA.mass + bodyB.mass) */ u.pdc(
+            // This tells how much objects are moving in opposite directions
+            bodyA.velocity.x * massA,
+            bodyA.velocity.y * massA,
+            bodyB.velocity.x * massB,
+            bodyB.velocity.y * massB
+        );
+        return impact;
+    },
+    walkOverWithRulebook(rulebook, pairs) {
+        if (!pairs.length || !rulebook.length) {
+            return;
+        }
+        for (const pair of pairs) {
+            const impact = window.matter.getImpact(pair);
+            const bodies = [pair.bodyA, pair.bodyB];
+            for (const body of bodies) {
+                if (!body.copy) {
+                    continue;
+                }
+                for (const rule of rulebook) {
+                    if (body.copy.template === rule.mainTemplate) {
+                        const otherBody = pair.bodyA === body ? pair.bodyB : pair.bodyA;
+                        // eslint-disable-next-line max-depth
+                        if (rule.any ||
+                            (otherBody.copy && rule.otherTemplate === otherBody.copy.template)) {
+                            rule.func.apply(body.copy, [otherBody.copy || otherBody.tile, impact]);
+                        }
+                    }
+                }
+            }
+        }
+    },
+    rulebookStart: [],
+    rulebookActive: [],
+    rulebookEnd: []
+};
+
+  let selected = null;
+let finished = 0;;
+function SetData(copy, target, value)
+{
+    switch(target)
+    {
+        case 'Brain':
+            copy.brain = value;
+        break;
+        case 'Digestion':
+            copy.digestion = value;
+        break;
+        case 'Growth':
+            copy.growth = value;
+        break;
+        case 'Immunity':
+            copy.immunity = value;
+        break;
+        case 'Protection':
+            copy.protection = value;
+        break;
     }
+
+    // if(value != null)
+    //     CheckData(copy);
+}
+
+// function CheckData(copy)
+// {
+//     if(copy.brain != null && copy.digestion != null && copy.growth != null && copy.immunity != null && copy.protection != null)
+//     {
+//         console.log('Complete Sequence!');
+//         copy.brain.kill = true;
+//         copy.digestion.kill = true;
+//         copy.growth.kill = true;
+//         copy.immunity.kill = true;
+//         copy.protection.kill = true;
+//     }
+// }
+
+function GetOrb()
+{
+    let r = Math.random();
+    let val = '';
+
+    if(r > .3)
+        val = r <= .65 ? 'HMO_' : 'BLactis_';
+    else if(r > .15 && r <= .30)
+        val = 'Protein_';
+    else if(r <= .15)
+        val = 'Sucrose_';
+
+    return val;
 };
 
   

@@ -90,16 +90,16 @@ body {
 
 
 @font-face {
-    font-family: 'Trade Gothic LT Bold';
-    src: url('fonts/fqcb9tjtrQNm7H4.ttf.woff') format('woff'),
-         url('fonts/fqcb9tjtrQNm7H4.ttf') format('truetype');
+    font-family: 'Geist-Regular';
+    src: url('fonts/fBdNGWmNGgrKJNN.ttf.woff') format('woff'),
+         url('fonts/fBdNGWmNGgrKJNN.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 @font-face {
-    font-family: 'Geist-Regular';
-    src: url('fonts/fBdNGWmNGgrKJNN.ttf.woff') format('woff'),
-         url('fonts/fBdNGWmNGgrKJNN.ttf') format('truetype');
+    font-family: 'Trade Gothic LT Bold';
+    src: url('fonts/fqcb9tjtrQNm7H4.ttf.woff') format('woff'),
+         url('fonts/fqcb9tjtrQNm7H4.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
