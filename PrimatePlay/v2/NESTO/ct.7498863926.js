@@ -970,7 +970,7 @@
           loadingBar.style.width = percents + "%";
         };
         const atlases = [
-          ["./img/a0.{webp,png}.5f5b9836ae.json","./img/a1.{webp,png}.85914da8b2.json","./img/a2.{webp,png}.a30001077e.json","./img/a3.{webp,png}.0da108a5cb.json","./img/a4.{webp,png}.9bb0a92527.json"]
+          ["./img/a0.{webp,png}.f105565376.json","./img/a1.{webp,png}.a7b56e912f.json","./img/a2.{webp,png}.829dae99ab.json","./img/a3.{webp,png}.0da108a5cb.json"]
         ][0];
         const tiledImages = [
           {"NESTO_GAME_MECHANICS_LIGHTBOX":{"source":"./img/t0.e8e848ae46.{webp,png}","shape":{"type":"rect","top":639,"bottom":640,"left":359,"right":360},"anchor":{"x":0.4993045897079277,"y":0.49960906958561374}}}
@@ -5982,6 +5982,34 @@ if (pointer.collides(this) && !this.getRoom().pressed && !this.getRoom().scrolli
 };
 templates.list['Black_dup'] = [];
         
+templates.templates["Black_Dup2"] = {
+    name: "Black_Dup2",
+    depth: 50,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Black",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Black_Dup2'] = [];
+        
     
     
 rooms.templates['Game'] = {
@@ -5989,7 +6017,7 @@ rooms.templates['Game'] = {
     width: 720,
     height: 1280,
     behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":0.2,"y":0.2},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":360,"y":704,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"GameBG"}]'),
+    objects: JSON.parse('[{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":360,"y":704,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"GameBG"}]'),
     bgs: JSON.parse('[{"texture":"BG","depth":-1,"exts":{"movementX":0,"movementY":0,"parallaxX":1,"parallaxY":1,"repeat":"no-repeat","scaleX":0.46,"scaleY":0.46,"shiftX":0,"shiftY":0}}]'),
     tiles: JSON.parse('[]'),
     backgroundColor: '#212121',
@@ -6257,7 +6285,7 @@ rooms.templates['Detailer'] = {
     width: 720,
     height: 1280,
     behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[{"x":384,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0,"y":0.22},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":360,"y":709,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Detailer"},{"x":-21.24786377,"y":-3.91851807,"opacity":0,"tint":16777215,"scale":{"x":12,"y":3.35057418},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-76.01629639,"y":-3.43322754,"opacity":0,"tint":16777215,"scale":{"x":1.9150273,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":682.59434017,"y":-12.01629639,"opacity":0,"tint":16777215,"scale":{"x":1.7099727,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-100.18322754,"y":1208.01629639,"opacity":0,"tint":16777215,"scale":{"x":14,"y":3},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":0.2,"y":0.2},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":360,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0.22855,"y":0.22855},"rotation":0,"exts":{},"customProperties":{},"template":"BG"}]'),
+    objects: JSON.parse('[{"x":384,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0,"y":0.22},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":360,"y":709,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Detailer"},{"x":-21.24786377,"y":-3.91851807,"opacity":0,"tint":16777215,"scale":{"x":12,"y":3.35057418},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-76.01629639,"y":-3.43322754,"opacity":0,"tint":16777215,"scale":{"x":1.9150273,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":682.59434017,"y":-12.01629639,"opacity":0,"tint":16777215,"scale":{"x":1.7099727,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-100.18322754,"y":1208.01629639,"opacity":0,"tint":16777215,"scale":{"x":14,"y":3},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":358,"y":640,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":-128,"y":-256,"opacity":1,"tint":16777215,"scale":{"x":15,"y":30},"rotation":0,"exts":{},"customProperties":{},"template":"Black_Dup2"}]'),
     bgs: JSON.parse('[]'),
     tiles: JSON.parse('[]'),
     backgroundColor: '#212121',
@@ -6286,13 +6314,13 @@ this.maxY = 640;
 this.scrollParent = templates.copy('ScrollParent', 360, 640);
 this.addChild(this.scrollParent);
 
-//LOGO
-this.logo = templates.copy('Logo', 0, -350);
-this.scrollParent.addChild(this.logo);
-this.logo.scale.x = this.logo.scale.y = 0.2;
+// //LOGO
+// this.logo = templates.copy('Logo', 0, -350);
+// this.scrollParent.addChild(this.logo);
+// this.logo.scale.x = this.logo.scale.y = 0.2;
 
 // NESTO LOGO
-this.nesto = templates.copy('NESTOLogo', 0, -190);
+this.nesto = templates.copy('NESTOLogo', 0, -265);
 this.scrollParent.addChild(this.nesto);
 this.nesto.scale.x = this.nesto.scale.y = 1;
 
@@ -6301,10 +6329,10 @@ this.head = new PIXI.Text('CONGRATULATIONS!', styles.get('RG-Bold_BigBlue'));
 this.scrollParent.addChild(this.head);
 this.head.anchor.x = this.head.anchor.y = 0.5;
 this.head.scale.x = this.head.scale.y = .6;
-this.head.y = -40;
+this.head.y = -115;
 
 // DIVIDER
-this.divider = templates.copy('Div', 0, -5);
+this.divider = templates.copy('Div', 0, -80);
 this.scrollParent.addChild(this.divider);
 this.divider.anchor.x = this.divider.anchor.y = 0.5;
 this.divider.scale.x = this.divider.scale.y = 0.25;
@@ -6315,22 +6343,22 @@ this.scrollParent.addChild(this.description);
 this.description.anchor.x = 0.5;
 this.description.anchor.y = 0;
 this.description.scale.x = this.description.scale.y = 0.525;
-this.description.y = 10;
+this.description.y = -75;
 
 // DETAIL 1
-this.d1 = templates.copy('Detailer1', -5, 450);
+this.d1 = templates.copy('Detailer1', -5, 375);
 this.scrollParent.addChild(this.d1);
 this.d1.anchor.x = this.d1.anchor.y = 0.5;
 this.d1.scale.x = this.d1.scale.y = 1;
 
 // DETAIL 2
-this.d2 = templates.copy('Detailer2', 10, 610);
+this.d2 = templates.copy('Detailer2', 10, 535);
 this.scrollParent.addChild(this.d2);
 this.d2.anchor.x = this.d2.anchor.y = 0.5;
 this.d2.scale.x = this.d2.scale.y = 1;
 
 // DETAIL 3
-this.d3 = templates.copy('Detailer3', -10, 780);
+this.d3 = templates.copy('Detailer3', -10, 705);
 this.scrollParent.addChild(this.d3);
 this.d3.anchor.x = this.d3.anchor.y = 0.5;
 this.d3.scale.x = this.d3.scale.y = 1;
@@ -6341,7 +6369,7 @@ this.scrollParent.addChild(this.description2);
 this.description2.anchor.x = 0.5;
 this.description2.anchor.y = 0;
 this.description2.scale.x = this.description2.scale.y = 0.525;
-this.description2.y = 880;
+this.description2.y = 805;
 
 // // DETAIL 4
 // this.d4 = templates.copy('Detailer4', 0, 1200);
@@ -6355,7 +6383,7 @@ this.scrollParent.addChild(this.description3);
 this.description3.anchor.x = 0.5;
 this.description3.anchor.y = 0;
 this.description3.scale.x = this.description3.scale.y = 0.525;
-this.description3.y = 1100;
+this.description3.y = 1025;
 }
 
     },
