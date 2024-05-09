@@ -90,9 +90,9 @@ body {
 
 
 @font-face {
-    font-family: 'Geist-Regular';
-    src: url('fonts/fBdNGWmNGgrKJNN.ttf.woff') format('woff'),
-         url('fonts/fBdNGWmNGgrKJNN.ttf') format('truetype');
+    font-family: 'Ridley Grotesk Bold';
+    src: url('fonts/f5n8W6R95fPfwNn.ttf.woff') format('woff'),
+         url('fonts/f5n8W6R95fPfwNn.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
@@ -104,9 +104,9 @@ body {
     font-style: normal;
 }
 @font-face {
-    font-family: 'Ridley Grotesk Bold';
-    src: url('fonts/f5n8W6R95fPfwNn.ttf.woff') format('woff'),
-         url('fonts/f5n8W6R95fPfwNn.ttf') format('truetype');
+    font-family: 'Geist-Regular';
+    src: url('fonts/fBdNGWmNGgrKJNN.ttf.woff') format('woff'),
+         url('fonts/fBdNGWmNGgrKJNN.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }

@@ -5984,7 +5984,7 @@ templates.list['Black_dup'] = [];
         
 templates.templates["Black_Dup2"] = {
     name: "Black_Dup2",
-    depth: 50,
+    depth: 53,
     blendMode: PIXI.BLEND_MODES.NORMAL,
     visible: true,
     baseClass: "AnimatedSprite",
@@ -6285,7 +6285,7 @@ rooms.templates['Detailer'] = {
     width: 720,
     height: 1280,
     behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[{"x":384,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0,"y":0.22},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":360,"y":709,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Detailer"},{"x":-21.24786377,"y":-3.91851807,"opacity":0,"tint":16777215,"scale":{"x":12,"y":3.35057418},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-76.01629639,"y":-3.43322754,"opacity":0,"tint":16777215,"scale":{"x":1.9150273,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":682.59434017,"y":-12.01629639,"opacity":0,"tint":16777215,"scale":{"x":1.7099727,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-100.18322754,"y":1208.01629639,"opacity":0,"tint":16777215,"scale":{"x":14,"y":3},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":358,"y":640,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":-128,"y":-256,"opacity":1,"tint":16777215,"scale":{"x":15,"y":30},"rotation":0,"exts":{},"customProperties":{},"template":"Black_Dup2"}]'),
+    objects: JSON.parse('[{"x":384,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0,"y":0.22},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":360,"y":709,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Detailer"},{"x":-21.24786377,"y":-3.91851807,"opacity":0,"tint":16777215,"scale":{"x":12,"y":3.35057418},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-76.01629639,"y":-3.43322754,"opacity":0,"tint":16777215,"scale":{"x":1.9150273,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":682.59434017,"y":-12.01629639,"opacity":0,"tint":16777215,"scale":{"x":1.7099727,"y":21},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":-100.18322754,"y":1208.01629639,"opacity":0,"tint":16777215,"scale":{"x":14,"y":3},"rotation":0,"exts":{},"customProperties":{},"template":"Black_dup"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":358,"y":640,"opacity":1,"tint":"#000000","scale":{"x":1.1,"y":1.1},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":358,"y":640,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"BG"},{"x":-64,"y":1280,"opacity":1,"tint":16777215,"scale":{"x":13,"y":7},"rotation":0,"exts":{},"customProperties":{},"template":"Black_Dup2"},{"x":-64,"y":-448,"opacity":1,"tint":16777215,"scale":{"x":13,"y":7},"rotation":0,"exts":{},"customProperties":{},"template":"Black_Dup2"}]'),
     bgs: JSON.parse('[]'),
     tiles: JSON.parse('[]'),
     backgroundColor: '#212121',
