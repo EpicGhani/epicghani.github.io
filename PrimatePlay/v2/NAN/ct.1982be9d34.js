@@ -4011,13 +4011,7 @@ if (!this.kill) {
       }
     },
     beforeStep() {
-      pointer.updateGestures();
-{
-    const positionGame = camera.uiToGameCoord(pointer.xui, pointer.yui);
-    pointer.x = positionGame.x;
-    pointer.y = positionGame.y;
-}
-{
+      {
     let i = 0;
     while (i < tween.tweens.length) {
         const twoon = tween.tweens[i];
@@ -4046,6 +4040,12 @@ if (!this.kill) {
         i++;
     }
 }
+pointer.updateGestures();
+{
+    const positionGame = camera.uiToGameCoord(pointer.xui, pointer.yui);
+    pointer.x = positionGame.x;
+    pointer.y = positionGame.y;
+}
 
     },
     afterStep() {
@@ -4068,8 +4068,7 @@ if (!this.kill) {
 
     },
     afterDraw() {
-      keyboard.clear();
-for (const p of pointer.down) {
+      for (const p of pointer.down) {
     p.xprev = p.x;
     p.yprev = p.y;
     p.xuiprev = p.x;
@@ -4084,6 +4083,7 @@ for (const p of pointer.hover) {
 inputs.registry['pointer.Wheel'] = 0;
 pointer.clearReleased();
 pointer.xmovement = pointer.ymovement = 0;
+keyboard.clear();
 
       if (this.behaviors.length) {
         runBehaviors(this, "rooms", "thisOnDraw");
@@ -6416,7 +6416,7 @@ rooms.templates['Detailer'] = {
     width: 720,
     height: 1280,
     behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[{"x":363,"y":708,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Lightbox"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":683.5625,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.31933594,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-10.1875,"y":-97.5,"opacity":0,"tint":16777215,"scale":{"x":11.35253906,"y":4.8828125},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.67089844,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":1204.0625,"opacity":0,"tint":16777215,"scale":{"x":13,"y":3.18652344},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":360,"y":640,"opacity":1,"tint":"#000000","scale":{"x":1.1,"y":1.1},"rotation":0,"exts":{},"customProperties":{},"template":"CutBG"},{"x":360,"y":640,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"CutBG"},{"x":-64,"y":1344,"opacity":1,"tint":16777215,"scale":{"x":14,"y":4},"rotation":0,"exts":{},"customProperties":{},"template":"Black_Filler"},{"x":-64,"y":-320,"opacity":1,"tint":16777215,"scale":{"x":14,"y":4},"rotation":0,"exts":{},"customProperties":{},"template":"Black_Filler"}]'),
+    objects: JSON.parse('[{"x":363,"y":708,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Lightbox"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":683.5625,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.31933594,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-10.1875,"y":-97.5,"opacity":0,"tint":16777215,"scale":{"x":11.35253906,"y":4.8828125},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.67089844,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":1204.0625,"opacity":0,"tint":16777215,"scale":{"x":13,"y":3.18652344},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":360,"y":640,"opacity":1,"tint":"#000000","scale":{"x":1.1,"y":1.1},"rotation":0,"exts":{},"customProperties":{},"template":"CutBG"},{"x":360,"y":640,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"CutBG"},{"x":-64,"y":1344,"opacity":1,"tint":16777215,"scale":{"x":13,"y":7},"rotation":0,"exts":{},"customProperties":{},"template":"Black_Filler"},{"x":-64,"y":-448,"opacity":1,"tint":16777215,"scale":{"x":13,"y":7},"rotation":0,"exts":{},"customProperties":{},"template":"Black_Filler"}]'),
     bgs: JSON.parse('[]'),
     tiles: JSON.parse('[]'),
     backgroundColor: '#212121',
