@@ -970,7 +970,7 @@
           loadingBar.style.width = percents + "%";
         };
         const atlases = [
-          ["./img/a0.{webp,png}.40fec0dac7.json","./img/a1.{webp,png}.dcae61c014.json","./img/a2.{webp,png}.affb7af63d.json","./img/a3.{webp,png}.178d417173.json","./img/a4.{webp,png}.cfbffa7ac4.json","./img/a5.{webp,png}.4a3e6b3d50.json","./img/a6.{webp,png}.87ef85a7e1.json"]
+          ["./img/a0.{webp,png}.75a83c4ad4.json","./img/a1.{webp,png}.38fd7f506c.json","./img/a2.{webp,png}.affb7af63d.json","./img/a3.{webp,png}.178d417173.json","./img/a4.{webp,png}.cfbffa7ac4.json","./img/a5.{webp,png}.4a3e6b3d50.json"]
         ][0];
         const tiledImages = [
           {}
@@ -4011,13 +4011,7 @@ if (!this.kill) {
       }
     },
     beforeStep() {
-      pointer.updateGestures();
-{
-    const positionGame = camera.uiToGameCoord(pointer.xui, pointer.yui);
-    pointer.x = positionGame.x;
-    pointer.y = positionGame.y;
-}
-{
+      {
     let i = 0;
     while (i < tween.tweens.length) {
         const twoon = tween.tweens[i];
@@ -4045,6 +4039,12 @@ if (!this.kill) {
         }
         i++;
     }
+}
+pointer.updateGestures();
+{
+    const positionGame = camera.uiToGameCoord(pointer.xui, pointer.yui);
+    pointer.x = positionGame.x;
+    pointer.y = positionGame.y;
 }
 
     },
@@ -6117,7 +6117,7 @@ templates.list['Mechanics2'] = [];
         
 templates.templates["Lightbox"] = {
     name: "Lightbox",
-    depth: 10,
+    depth: 11,
     blendMode: PIXI.BLEND_MODES.NORMAL,
     visible: true,
     baseClass: "AnimatedSprite",
@@ -6381,6 +6381,34 @@ templates.templates["Div"] = {
 };
 templates.list['Div'] = [];
         
+templates.templates["Black_Filler"] = {
+    name: "Black_Filler",
+    depth: 10,
+    blendMode: PIXI.BLEND_MODES.NORMAL,
+    visible: true,
+    baseClass: "AnimatedSprite",
+    
+            texture: "Black",
+        animationFPS: 30,
+        playAnimationOnStart: false,
+        loopAnimation: true,
+    behaviors: JSON.parse('[]'),
+    onStep: function () {
+        
+    },
+    onDraw: function () {
+        
+    },
+    onDestroy: function () {
+        
+    },
+    onCreate: function () {
+        
+    },
+    extends: {}
+};
+templates.list['Black_Filler'] = [];
+        
     
     
 rooms.templates['Detailer'] = {
@@ -6388,7 +6416,7 @@ rooms.templates['Detailer'] = {
     width: 720,
     height: 1280,
     behaviors: JSON.parse('[]'),
-    objects: JSON.parse('[{"x":360,"y":640,"opacity":1,"tint":16777215,"scale":{"x":0.2285,"y":0.2285},"rotation":0,"exts":{},"customProperties":{},"template":"CutBG"},{"x":363,"y":708,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Lightbox"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":683.5625,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.31933594,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-10.1875,"y":-97.5,"opacity":0,"tint":16777215,"scale":{"x":11.35253906,"y":4.8828125},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.67089844,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":1204.0625,"opacity":0,"tint":16777215,"scale":{"x":13,"y":3.18652344},"rotation":0,"exts":{},"customProperties":{},"template":"Black"}]'),
+    objects: JSON.parse('[{"x":363,"y":708,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Lightbox"},{"x":360,"y":96,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"Logo"},{"x":683.5625,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.31933594,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-10.1875,"y":-97.5,"opacity":0,"tint":16777215,"scale":{"x":11.35253906,"y":4.8828125},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":0,"opacity":0,"tint":16777215,"scale":{"x":1.67089844,"y":19},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":-64,"y":1204.0625,"opacity":0,"tint":16777215,"scale":{"x":13,"y":3.18652344},"rotation":0,"exts":{},"customProperties":{},"template":"Black"},{"x":360,"y":640,"opacity":1,"tint":"#000000","scale":{"x":1.1,"y":1.1},"rotation":0,"exts":{},"customProperties":{},"template":"CutBG"},{"x":360,"y":640,"opacity":1,"tint":16777215,"scale":{"x":1,"y":1},"rotation":0,"exts":{},"customProperties":{},"template":"CutBG"}]'),
     bgs: JSON.parse('[]'),
     tiles: JSON.parse('[]'),
     backgroundColor: '#212121',
@@ -6418,13 +6446,13 @@ this.maxY = 640;
 this.scrollParent = templates.copy('ScrollParent', 360, 640);
 this.addChild(this.scrollParent);
 
-// LOGO
-this.logo = templates.copy('Logo', 0, -350);
-this.scrollParent.addChild(this.logo);
-this.logo.scale.x = this.logo.scale.y = 1;
+// // LOGO
+// this.logo = templates.copy('Logo', 0, -350);
+// this.scrollParent.addChild(this.logo);
+// this.logo.scale.x = this.logo.scale.y = 1;
 
 // NANKID LOGO
-this.nankid = templates.copy('NANKIDLogo', 0, -200);
+this.nankid = templates.copy('NANKIDLogo', 0, -275);
 this.scrollParent.addChild(this.nankid);
 this.nankid.scale.x = this.nankid.scale.y = 1;
 
@@ -6433,10 +6461,10 @@ this.head = new PIXI.Text('CONGRATULATIONS!', styles.get('RG-Bold_BigBlue'));
 this.scrollParent.addChild(this.head);
 this.head.anchor.x = this.head.anchor.y = 0.5;
 this.head.scale.x = this.head.scale.y = .6;
-this.head.y = -50;
+this.head.y = -125;
 
 // DIVIDER
-this.divider = templates.copy('Div', 0, -15);
+this.divider = templates.copy('Div', 0, -90);
 this.scrollParent.addChild(this.divider);
 this.divider.anchor.x = this.divider.anchor.y = 0.5;
 this.divider.scale.x = this.divider.scale.y = 0.25;
@@ -6447,16 +6475,16 @@ this.scrollParent.addChild(this.description);
 this.description.anchor.x = 0.5;
 this.description.anchor.y = 0;
 this.description.scale.x = this.description.scale.y = 0.525;
-this.description.y = 0;
+this.description.y = -75;
 
 // DETAIL 1
-this.d1 = templates.copy('Detailer1', 5, 650);
+this.d1 = templates.copy('Detailer1', 5, 575);
 this.scrollParent.addChild(this.d1);
 this.d1.anchor.x = this.d1.anchor.y = 0.5;
 this.d1.scale.x = this.d1.scale.y = 1;
 
 // DETAIL 2
-this.d2 = templates.copy('Detailer2', 0, 1080);
+this.d2 = templates.copy('Detailer2', 0, 1005);
 this.scrollParent.addChild(this.d2);
 this.d2.anchor.x = this.d2.anchor.y = 0.5;
 this.d2.scale.x = this.d2.scale.y = 1;
